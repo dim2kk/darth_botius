@@ -9,7 +9,8 @@ collection_users = mongo_db.users
 collection_stats = mongo_db.users_stats
 collection_squad_commands = mongo_db.squad_commands
 
-# new_squad_command = {"squad_pos": squad_pos, "squad_number": squad_number, "player_name": cur_player, "unit": cur_unit}
+# (mongo_db.squad_commands) 
+#  new_squad_command = {"squad_pos": squad_pos, "squad_number": squad_number, "player_name": cur_player, "unit": cur_unit}
 
 def handler_white_check_mark(bot,message,my_logger):
 
@@ -40,7 +41,9 @@ def handler_white_check_mark(bot,message,my_logger):
 				squad_number = ss[0]
 				squad_pos = ss[1]
 
-			elif s.startswith('Odd number of possible'):
+				print 
+
+			elif s.startswith('Odd number'):
 				pass
 
 			elif s in guild_players: # это строка с ником игрока
@@ -106,8 +109,6 @@ def handler_list_commands(bot,message,my_logger):
 	except Exception as e:
 		bot.reply_to(message, "Произошла ошибка, попробуйте позже!")
 		my_logger.info(f"Something went wrong in handler_list_commands: {e}")
-
-
 
 
 def handler_list_commands_personal(bot,message,my_logger):
