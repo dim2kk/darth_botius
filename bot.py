@@ -19,7 +19,10 @@ import pymongo
 import time
 from pymongo import MongoClient
 
-from const_secured import *  # TOKEN, LOG_FILE_PATH, OWNER, ADMINS
+import ssl
+from aiohttp import web
+
+from const_secured import *  # TOKEN, LOG_FILE_PATH, etc.
 from const import *
 from handler_forget import *
 from handler_reg import *
@@ -28,6 +31,23 @@ from handler_up import *
 from handler_list import *
 from handler_ready import *
 from handler_squadcommands import *
+
+WEBHOOK_URL_BASE = "https://{}:{}".format(WEBHOOK_HOST, WEBHOOK_PORT)
+WEBHOOK_URL_PATH = "/{}/".format(TOKEN)
+
+app = web.Application()
+
+# Process webhook calls
+async def handle(request):
+    if request.match_info.get('token') == bot.token:
+        request_body_dict = await request.json()
+        update = telebot.types.Update.de_json(request_body_dict)
+        bot.process_new_updates([update])
+        return web.Response()
+    else:
+        return web.Response(status=403)
+
+app.router.add_post('/{token}/', handle)
 
 format_str = '%(asctime)s %(message)s'
 date_format = '%d.%m.%Y %H:%M:%S'
@@ -47,6 +67,7 @@ collection_squad_commands = mongo_db.squad_commands
 
 bot = telebot.TeleBot(TOKEN)
 
+bot.send_message(OWNER, "Start successful!")
 
 @bot.message_handler(commands=['start', 'help'])
 def command_handler(message: Message):
@@ -148,9 +169,21 @@ def handle_text(message: Message):
 				my_logger.info(f"tele_id saved for {username}")
 
 
-# @bot.message_handler(content_types=['sticker'])
-# def sticker_handler(message: Message):
-# 	bot.send_sticker(chat_id=message.chat.id, data='CAADAgADFgADqDrpAlNzVJTwKjVfAg')
+# Remove webhook, it fails sometimes the set if there is a previous webhook
+bot.remove_webhook()
 
+# Set webhook
+bot.set_webhook(url=WEBHOOK_URL_BASE + WEBHOOK_URL_PATH,
+                certificate=open(WEBHOOK_SSL_CERT, 'r'))
 
-bot.polling(timeout=60)
+# Build ssl context
+context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+context.load_cert_chain(WEBHOOK_SSL_CERT, WEBHOOK_SSL_PRIV)
+
+# Start aiohttp server
+web.run_app(
+    app,
+    host=WEBHOOK_LISTEN,
+    port=WEBHOOK_PORT,
+    ssl_context=context,
+)
