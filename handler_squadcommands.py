@@ -17,11 +17,16 @@ def handler_white_check_mark(bot,message,my_logger):
 	try:
 
 		guild_players = []
+		guild_chat_players = []
 		cur_player = ""
 
 		rows = collection_stats.find()
 		for r in rows:
-			guild_players.append(r['player_name'])
+			guild_players.append(r['player_name']) # guild_players заполнено swgoh_name'ами на основе данных ги с сайта swgoh.gg
+
+		rows = collection_users.find()
+		for r in rows:
+			guild_chat_players.append(r['swgoh_name']) # guild_chat_players заполнено swgoh_name'ами, зарегенными у бота
 
 		text = message.text.split("\n")
 		msg = ""
@@ -47,6 +52,9 @@ def handler_white_check_mark(bot,message,my_logger):
 				pass
 
 			elif s in guild_players: # это строка с ником игрока
+				cur_player = s
+
+			elif s in guild_chat_players: # может быть в guild_players нет, т.к. игрок не зареган в swgoh.gg, но зато зареган у бота (!rreg)
 				cur_player = s
 
 			else: # значит это строка с названием персонажа-корабля
