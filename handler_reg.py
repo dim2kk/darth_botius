@@ -14,6 +14,10 @@ def handler_reg(bot,message,my_logger):
 
 	try:
 
+		RREG = False
+		if (message.text.startswith('!rreg') or message.text.startswith('!ррег')) and message.from_user.id in ADMINS:
+			RREG = True
+
 		msg = ""
 		ally_code = False
 		telega_username = False
@@ -51,6 +55,17 @@ def handler_reg(bot,message,my_logger):
 
 			# на выходе имеем установленный ally_code и telega_username
 
+		elif len(s)>3 and RREG: # админ передал 4 параметра - !rreg tgusername allycode nick name name name in game
+
+			if re.match(r"(\D*\d){9}", s[2]) and len(s[2]) == 9: # проверим что код = девятизначное число
+				ally_code = s[2]
+				telega_username = s[1].replace("@","")
+				game_nick = ""
+				for i in range(3,len(s)):
+					game_nick += f"{s[i]} "
+				game_nick = game_nick.rstrip()
+				bot.reply_to(message, f'Попытка зарегистрировать {telega_username} с кодом {ally_code} и ником в игре "{game_nick}"')
+
 		else:
 			bot.reply_to(message, 'Регистрация невозможна! Корректное использование:\n`!reg имяВТелеге кодСоюзника` или `!reg кодСоюзника` для регистрации себя', parse_mode="Markdown")
 			my_logger.info("Registration not possible, wrong command format")
@@ -58,17 +73,23 @@ def handler_reg(bot,message,my_logger):
 
 		# далее исполняется только если код союзника = девятизначное число в ally_code, а также установлен telega_username
 		if ally_code and telega_username: # получим данные из swgoh.gg
-			r = requests.get(f'{SWGOH_URL}/{ally_code}')
-			jdata = r.json()
-
-			if jdata:
-				pass
+			
+			if not RREG:
+				r = requests.get(f'{SWGOH_URL}/{ally_code}')
+				jdata = r.json()
+				if jdata:
+					pass
+				else:
+					bot.reply_to(message, f'Регистрация невозможна, указанный код союзника не найден на https://swgoh.gg/p/{ally_code}/')
+					my_logger.info("Ally code not found")
+					return
+				player_name = jdata['data']['name']
+			elif game_nick is not None: # это запрос на регистрацию от админа с указанным game_nick, который уже должен быть заполнен
+				player_name = game_nick
 			else:
 				bot.reply_to(message, f'Регистрация невозможна, указанный код союзника не найден на https://swgoh.gg/p/{ally_code}/')
 				my_logger.info("Ally code not found")
 				return
-
-			player_name = jdata['data']['name']
 
 			# проверим, может игрок уже зарегистрирован
 

@@ -22,7 +22,7 @@ from pymongo import MongoClient
 import ssl
 from aiohttp import web
 
-from const_secured import *  # TOKEN, LOG_FILE_PATH, etc.
+from const_secured import *  # TOKEN, LOG_FILE_PATH, WEBHOOK_HOST, WEBHOOK_PORT, etc.
 from const import *
 from handler_forget import *
 from handler_reg import *
@@ -93,6 +93,9 @@ def handle_text(message: Message):
 				bot.send_message(message.chat.id, extra_help_msg, parse_mode="Markdown")
 
 		elif message.text.startswith('!reg') or message.text.startswith('!рег'): # возможные варианты: !reg code, !reg name code
+			handler_reg(bot,message,my_logger)
+
+		elif (message.text.startswith('!rreg') or message.text.startswith('!ррег')) and message.from_user.id in ADMINS: # вариация для администратора
 			handler_reg(bot,message,my_logger)
 			
 		elif message.text.startswith('!forget') or message.text.startswith('!забыть'):

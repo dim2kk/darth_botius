@@ -91,6 +91,8 @@ def handler_ready(bot,message,my_logger):
 								else:
 									stars[req] = 0
 
+							# пример итога: stars["PHANTOM2"] = 7
+
 							full_stars = []
 							six_stars = []
 							five_stars = []
@@ -106,7 +108,7 @@ def handler_ready(bot,message,my_logger):
 									five_stars.append(key)
 
 
-							if pers_id == "CAPITALCHIMAERA":
+							if pers_id == "CAPITALCHIMAERA":  # особо заморочные условия получения химеры, нужно home one + ghost + phantom + еще один ребел
 
 								base_ship_list = ["CAPITALMONCALAMARICRUISER", "GHOST", "PHANTOM2"]
 								need_one_more_ship_list = ["XWINGRED3", "XWINGRED2", "UWINGROGUEONE", "UWINGSCARIF"]
