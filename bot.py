@@ -3,7 +3,14 @@
 
 # https://github.com/eternnoir/pyTelegramBotAPI
 
-# таблица darth.users (_id, user, ally_code, swgoh_name, is_admin)
+# mongo_db.users
+# {'user': telega_username, 'ally_code': ally_code, 'swgoh_name': swgoh_name}
+
+# mongo_db.users_stats (!up)
+# {"player_name": swgoh_name, "ally_code": ally_code, "last_update": time.time(), [unit_id]: [unit_rarity]}
+
+# mongo_db.squad_commands
+# {"squad_pos": squad_pos, "squad_number": squad_number, "player_name": swgoh_name, "unit": unit_name_rus}
 
 import random 
 import telebot
@@ -31,6 +38,7 @@ from handler_up import *
 from handler_list import *
 from handler_ready import *
 from handler_squadcommands import *
+from handler_checkregs import *
 
 WEBHOOK_URL_BASE = "https://{}:{}".format(WEBHOOK_HOST, WEBHOOK_PORT)
 WEBHOOK_URL_PATH = "/{}/".format(TOKEN)
@@ -143,8 +151,10 @@ def handle_text(message: Message):
 			handler_list_commands(bot,message,my_logger)
 
 		elif message.text.startswith('!sendallcommands') and message.from_user.id in ADMINS:
-			# pass
 			handler_sendall_commands(bot,message,my_logger)
+
+		elif message.text.startswith('!checkregs') and message.from_user.id in ADMINS:
+			handler_checkregs(bot,message,my_logger)
 
 		elif message.text.startswith('!команды'):
 			handler_list_commands_personal(bot,message,my_logger)
