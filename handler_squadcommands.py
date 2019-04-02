@@ -1,4 +1,6 @@
 import pymongo
+import time
+import math
 from pymongo import MongoClient
 from telebot.apihelper import ApiException
 from const import *
@@ -8,78 +10,99 @@ mongo_db = mongo_client.darth
 collection_users = mongo_db.users
 collection_stats = mongo_db.users_stats
 collection_squad_commands = mongo_db.squad_commands
+collection_squad_commands_overview = mongo_db.squad_commands_overview
 
 # (mongo_db.squad_commands) 
 #  new_squad_command = {"squad_pos": squad_pos, "squad_number": squad_number, "player_name": cur_player, "unit": cur_unit}
 
-def handler_white_check_mark(bot,message,my_logger):
+# squad_commands_overview
+# "squad_pos": squad_pos, "squad_number": squad_number, "possibility": possibility (0=no, 1=odd, 2=ok)
+# or
+# "last_update": unix_timestamp, "phase": phasenumber
 
+def get_overview():
+
+	overview_msg = ""
+	phase_number = "n/a"
+	last_update = 0
+	passed_time = 0
+	prev_pos = '1'
+	passed_time_text = "n/a"
+	current_time = math.floor(time.time())
+
+	ov_phase = collection_squad_commands_overview.find( { 'phase': { '$exists': 'true' } } )
+	if ov_phase[0] is not None:
+		phase_number = ov_phase[0]['phase']
+		last_update = ov_phase[0]['last_update']
+		passed_time = current_time-last_update
+
+		if passed_time<60:
+			passed_time_text = f"{passed_time} сек"
+		elif passed_time<3600:
+			passed_time_text = f"{passed_time//60} мин"
+		elif passed_time<86400:
+			passed_time_text = f"{passed_time//3600} ч"
+		else:
+			passed_time_text = "более 1 дня"
+
+	overview_msg = f"*ФАЗА {phase_number}*\n(последнее обновление — {passed_time_text} назад)\n\n"
+
+	ov_rows = collection_squad_commands_overview.find({ 'squad_pos': { '$exists': 'true' } }).sort([('squad_pos', pymongo.ASCENDING), ('squad_number', pymongo.ASCENDING)])
+	for r in ov_rows:
+		
+		if r['squad_pos'] is not None:
+			sp = r['squad_pos']
+		if r['squad_number'] is not None:
+			sn = r['squad_number']
+		if r['possibility'] is not None:
+			spp = r['possibility']
+
+		if sp != prev_pos:
+			overview_msg += "\n"
+
+		if spp==0:
+			overview_msg += f"❌ "
+		elif spp==1:
+			overview_msg += f"⚠ "
+		elif spp==2:
+			overview_msg += f"✅ "
+
+		if sp=='1':
+			overview_msg += f"ВЕРХ — "
+		elif sp=='2':
+			overview_msg += f"СЕРЕДИНА — "
+		elif sp=='3':
+			overview_msg += f"НИЗ — "
+
+		overview_msg += f"{sn}\n"
+		prev_pos = sp
+
+	return overview_msg
+
+
+def handler_overview_commands(bot,message,my_logger):
 	try:
+		overview_msg = get_overview()
+		bot.send_message(message.chat.id, overview_msg, parse_mode='Markdown')
 
-		guild_players = []
-		guild_chat_players = []
-		cur_player = ""
-
-		rows = collection_stats.find()
-		for r in rows:
-			guild_players.append(r['player_name']) # guild_players заполнено swgoh_name'ами на основе данных ги с сайта swgoh.gg
-
-		rows = collection_users.find()
-		for r in rows:
-			guild_chat_players.append(r['swgoh_name']) # guild_chat_players заполнено swgoh_name'ами, зарегенными у бота
-
-		text = message.text.split("\n")
-		msg = ""
-
-		for s in text:
-
-			if s.startswith(':white_check_mark:') or s.startswith(':warning:'):
-				s = s.replace(':white_check_mark: ', '')
-				s = s.replace(':warning: ', '')
-				s = s.replace('SQUADRON ', '')
-				s = s.replace('PLATOON ', '')
-				s = s.replace('top', '1')
-				s = s.replace('mid', '2')
-				s = s.replace('bottom', '3')
-
-				ss = s.split(" - ")
-				squad_number = ss[0]
-				squad_pos = ss[1]
-
-				print 
-
-			elif s.startswith('Odd number'):
-				pass
-
-			elif s in guild_players: # это строка с ником игрока
-				cur_player = s
-
-			elif s in guild_chat_players: # может быть в guild_players нет, т.к. игрок не зареган в swgoh.gg, но зато зареган у бота (!rreg)
-				cur_player = s
-
-			else: # значит это строка с названием персонажа-корабля
-				cur_unit = s
-				new_squad_command = {"squad_pos": squad_pos, "squad_number": squad_number, "player_name": cur_player, "unit": cur_unit}
-				collection_squad_commands.insert_one(new_squad_command)
-				msg += f'Команда для `{cur_player}` разместить на *{squad_pos}-{squad_number}* юнита: _{cur_unit}_\n'
-
-		bot.send_message(message.chat.id, msg, parse_mode='Markdown')
+	except ApiException as e:
+		my_logger.info(f'{e} while sending message')
 
 	except Exception as e:
 		bot.reply_to(message, "Произошла ошибка, попробуйте позже!")
-		my_logger.info(f"Something went wrong during in handler_white_check_mark: {e}")
-
+		my_logger.info(f"Something went wrong in handler_list_commands: {e}")
 
 
 def handler_list_commands(bot,message,my_logger):
 
 	try:
 
-		rows = collection_squad_commands.find().sort([('squad_pos', pymongo.ASCENDING), ('squad_number', pymongo.ASCENDING)])
+		overview_msg = get_overview()
+		bot.send_message(message.chat.id, overview_msg, parse_mode='Markdown')
 
+		rows = collection_squad_commands.find().sort([('squad_pos', pymongo.ASCENDING), ('squad_number', pymongo.ASCENDING)])
 		msg = ""
 		cur_squad_pos_number = ""
-		bot.send_message(message.chat.id, "*Текущий список команд по взводам:*", parse_mode='Markdown')
 
 		for r in rows:
 
@@ -215,3 +238,61 @@ def handler_sendall_commands(bot,message,my_logger):
 					bot.send_message(tele_id, msg, parse_mode='Markdown')
 				except ApiException as ApiE:
 					my_logger.info(f'{ApiE} while trying to send message to {user}')
+
+
+def handler_white_check_mark(bot,message,my_logger):
+
+	try:
+
+		guild_players = []
+		guild_chat_players = []
+		cur_player = ""
+
+		rows = collection_stats.find()
+		for r in rows:
+			guild_players.append(r['player_name']) # guild_players заполнено swgoh_name'ами на основе данных ги с сайта swgoh.gg
+
+		rows = collection_users.find()
+		for r in rows:
+			guild_chat_players.append(r['swgoh_name']) # guild_chat_players заполнено swgoh_name'ами, зарегенными у бота
+
+		text = message.text.split("\n")
+		msg = ""
+
+		for s in text:
+
+			if s.startswith(':white_check_mark:') or s.startswith(':warning:'):
+				s = s.replace(':white_check_mark: ', '')
+				s = s.replace(':warning: ', '')
+				s = s.replace('SQUADRON ', '')
+				s = s.replace('PLATOON ', '')
+				s = s.replace('top', '1')
+				s = s.replace('mid', '2')
+				s = s.replace('bottom', '3')
+
+				ss = s.split(" - ")
+				squad_number = ss[0]
+				squad_pos = ss[1]
+
+				print 
+
+			elif s.startswith('Odd number'):
+				pass
+
+			elif s in guild_players: # это строка с ником игрока
+				cur_player = s
+
+			elif s in guild_chat_players: # может быть в guild_players нет, т.к. игрок не зареган в swgoh.gg, но зато зареган у бота (!rreg)
+				cur_player = s
+
+			else: # значит это строка с названием персонажа-корабля
+				cur_unit = s
+				new_squad_command = {"squad_pos": squad_pos, "squad_number": squad_number, "player_name": cur_player, "unit": cur_unit}
+				collection_squad_commands.insert_one(new_squad_command)
+				msg += f'Команда для `{cur_player}` разместить на *{squad_pos}-{squad_number}* юнита: _{cur_unit}_\n'
+
+		bot.send_message(message.chat.id, msg, parse_mode='Markdown')
+
+	except Exception as e:
+		bot.reply_to(message, "Произошла ошибка, попробуйте позже!")
+		my_logger.info(f"Something went wrong during in handler_white_check_mark: {e}")

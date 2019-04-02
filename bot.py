@@ -150,6 +150,9 @@ def handle_text(message: Message):
 		elif message.text.startswith('!listcommands') and message.from_user.id in ADMINS:
 			handler_list_commands(bot,message,my_logger)
 
+		elif message.text.startswith('!tboverview') and message.from_user.id in ADMINS:
+			handler_overview_commands(bot,message,my_logger)
+
 		elif message.text.startswith('!sendallcommands') and message.from_user.id in ADMINS:
 			handler_sendall_commands(bot,message,my_logger)
 
@@ -164,8 +167,8 @@ def handle_text(message: Message):
 			print(f'Unidentified command in message: {message.text}')
 
 	
-	elif message.text.startswith(':white_check_mark:') or message.text.startswith(':warning:'):
-		handler_white_check_mark(bot,message,my_logger)
+	# elif message.text.startswith(':white_check_mark:') or message.text.startswith(':warning:'):
+	# 	handler_white_check_mark(bot,message,my_logger)
 
 
 	else: # просто все сообщения в чате - сохраним инфу о чатайди для зарегистрированных, ибо надо
