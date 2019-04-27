@@ -27,7 +27,7 @@ def handler_stat(bot,message,my_logger):
 				my_logger.info(f"User {user} is not registered, can not show stat")
 				return
 
-		else: # код союзника указан в запросе
+		else: # код союзника или телега-имя указан в запросе
 			user = message.text[6:].replace("@","")
 			if re.match(r"(\D*\d){9}", user) and len(user) == 9: # вместо имени указан ally code, ну ок
 				ally_code = user

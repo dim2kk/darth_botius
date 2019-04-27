@@ -103,14 +103,16 @@ def handler_list_commands(bot,message,my_logger):
 		rows = collection_squad_commands.find().sort([('squad_pos', pymongo.ASCENDING), ('squad_number', pymongo.ASCENDING)])
 		msg = ""
 		cur_squad_pos_number = ""
+		cur_consecutive_squads = 0
 
 		for r in rows:
 
-			# попробуем найти телега-айди игрока
+			# попробуем найти телега-айди игрока и обратиться к нему напрямую
 			found_user = collection_users.find_one({"swgoh_name": r['player_name']})
 			if found_user is not None:
 				r['player_name'] = f"@{found_user['user']}"
 
+			# позиции хранятся цифрами - надо переделать их в слова
 			if r['squad_pos'] == "1":
 				r['squad_pos'] = "ВЕРХ"
 			elif r['squad_pos'] == "2":
@@ -119,20 +121,26 @@ def handler_list_commands(bot,message,my_logger):
 				r['squad_pos'] = "НИЗ"
 
 			full_squad_pn = f"{r['squad_pos'].upper()}-{r['squad_number']}"
-			if full_squad_pn != cur_squad_pos_number:
-				msg += "\n"
-				cur_squad_pos_number = full_squad_pn
+
+			if full_squad_pn != cur_squad_pos_number: # начался новый сектор в списке
+
+				if cur_consecutive_squads == 3: # уже три взвода показано, можно начинать новое сообщение
+					cur_consecutive_squads = 1
+					try:
+						bot.send_message(message.chat.id, msg)
+					except ApiException as e:
+						my_logger.info(f'{e} while sending message')
+					msg = ""
+
+				else: # надо просто добавить дополнительный перенос строки
+					msg += "\n"
+					cur_consecutive_squads += 1
+
+				cur_squad_pos_number = full_squad_pn # запомним какой сектор теперь текущий
 
 			msg += f"{full_squad_pn} — {r['player_name']} — {r['unit']}\n"
 
-			if len(msg) > 3000:
-				try:
-					bot.send_message(message.chat.id, msg)
-				except ApiException as e:
-					my_logger.info(f'{e} while sending message')
-				msg = "... продолжение ... \n"
-
-		bot.send_message(message.chat.id, msg)
+		bot.send_message(message.chat.id, msg) # отправим последнее сообщение
 
 	except ApiException as e:
 		my_logger.info(f'{e} while sending message')
@@ -188,11 +196,16 @@ def handler_list_commands_personal(bot,message,my_logger):
 					bot.send_message(message.chat.id, msg, parse_mode='Markdown')
 					msg = "... продолжение ... \n"
 
-			bot.send_message(message.chat.id, msg, parse_mode='Markdown')
+			if (message.from_user.id == message.chat.id): # это приват! значит можно отправлять команды 
+				bot.send_message(message.chat.id, msg, parse_mode='Markdown')
+			else: # не приват, а канал. Больше нельзя запрашивать команды в общем канале
+				bot.reply_to(message, "Теперь `!команды` можно запросить только в привате у бота!", parse_mode='Markdown')
 
 		else:
-
-			bot.send_message(message.chat.id, f'Для "{user}" не найдено команд', parse_mode='Markdown')
+			if (message.from_user.id == message.chat.id): # это приват! значит можно отправлять команды 
+				bot.send_message(message.chat.id, f'Для "{user}" не найдено команд', parse_mode='Markdown')
+			else: # не приват, а канал. Больше нельзя запрашивать команды в общем канале
+				bot.reply_to(message, "Теперь `!команды` можно запросить только в привате у бота!", parse_mode='Markdown')
 
 	except Exception as e:
 

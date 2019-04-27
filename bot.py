@@ -80,6 +80,14 @@ bot.send_message(OWNER, "Start successful!")
 @bot.message_handler(commands=['start', 'help'])
 def command_handler(message: Message):
 	bot.send_message(message.chat.id, help_msg, parse_mode="Markdown")
+	if message.from_user.id == message.chat.id and message.from_user.id in ADMINS: # это приват с админом!
+		bot.send_message(message.chat.id, extra_help_msg, parse_mode="Markdown")
+
+
+@bot.message_handler(commands=['commands'])
+def command_handler(message: Message):
+	message.text = "!команды"
+	handler_list_commands_personal(bot,message,my_logger)
 
 
 @bot.message_handler(content_types=['text'])
@@ -97,7 +105,7 @@ def handle_text(message: Message):
 
 		if message.text.lower() == "!help" or message.text.lower() == "!помощь":
 			bot.send_message(message.chat.id, help_msg, parse_mode="Markdown")
-			if message.from_user.id == message.chat.id and message.from_user.id in ADMINS: # это приват с овнером!
+			if message.from_user.id == message.chat.id and message.from_user.id in ADMINS: # это приват с админом!
 				bot.send_message(message.chat.id, extra_help_msg, parse_mode="Markdown")
 
 		elif message.text.startswith('!reg') or message.text.startswith('!рег'): # возможные варианты: !reg code, !reg name code
@@ -106,7 +114,7 @@ def handle_text(message: Message):
 		elif (message.text.startswith('!rreg') or message.text.startswith('!ррег')) and message.from_user.id in ADMINS: # вариация для администратора
 			handler_reg(bot,message,my_logger)
 			
-		elif message.text.startswith('!forget') or message.text.startswith('!забыть'):
+		elif (message.text.startswith('!forget') or message.text.startswith('!забыть')) and message.from_user.id in ADMINS:
 			handler_forget(bot,message,my_logger)
 
 		elif message.text.startswith('!promote') and message.from_user.id == OWNER:
@@ -134,7 +142,7 @@ def handle_text(message: Message):
 		elif message.text.startswith('!stat') or message.text.startswith('!стат'):
 			handler_stat(bot,message,my_logger)
 			
-		elif message.text == '!list' or message.text == '!лист' or message.text == '!список':
+		elif (message.text == '!list' or message.text == '!лист' or message.text == '!список') and message.from_user.id in ADMINS:
 			handler_list(bot,message,my_logger)
 
 		elif (message.text.startswith('!up') or message.text.startswith('!ап')) and message.from_user.id in ADMINS:

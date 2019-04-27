@@ -14,19 +14,6 @@ def handler_ready(bot,message,my_logger):
 
 	try:
 
-		msg_ready_help = f'Возможные варианты запросов:\n\n'
-		msg_ready_help += f'`!готовность траун`\n'
-		msg_ready_help += f'`!готовность c3po`\n'
-		msg_ready_help += f'`!готовность рей`\n'
-		msg_ready_help += f'`!готовность клюк`\n'
-		msg_ready_help += f'`!готовность чубака`\n'
-		msg_ready_help += f'`!готовность р2д2`\n'
-		msg_ready_help += f'`!готовность бб8`\n'
-		msg_ready_help += f'`!готовность палпатин`\n'
-		msg_ready_help += f'`!готовность реван`\n'
-		msg_ready_help += f'`!готовность сокол`\n'
-		msg_ready_help += f'`!готовность химера`'
-
 		if message.text == '!готовность':
 
 			bot.reply_to(message, msg_ready_help, parse_mode='Markdown')
