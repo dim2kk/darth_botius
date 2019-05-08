@@ -31,9 +31,11 @@ def handler_up(bot,message,my_logger):
 			for j_unit in j_player['units']: # идем по всем юнитам игрока
 				unit_id = j_unit['data']['base_id']
 				unit_rarity = j_unit['data']['rarity']
+				unit_power = j_unit['data']['power']
 				# unit_gear_level = j_unit['data']['gear_level']
 				# unit_pretty_name = j_unit['data']['name']
 				new_stat[unit_id] = unit_rarity
+				new_stat[f'{unit_id}_power'] = unit_power
 				# new_stat[f'{unit_id}_gear'] = unit_gear_level
 
 			collection_stats.insert_one(new_stat)
