@@ -3,6 +3,8 @@ from pymongo import MongoClient
 import requests
 import json
 import time
+import math
+from datetime import datetime
 from const import *
 
 mongo_client = MongoClient()
@@ -31,44 +33,65 @@ def handler_ready(bot,message,my_logger):
 				if pers_id in REQS:
 
 					row = collection_stats.find() # соберем всю стату которая есть
-					count_row = collection_stats.count_documents({})
+					count_row = collection_stats.count_documents({}) # сколько всего игроков в базе в данный момент
 					already_have7 = []
 					already_have6 = []
 					already_have5 = []
+					not_have7 = []
+					current_time = math.floor(time.time())
 
-					not_have = []
-					msg = f'У меня есть информация о `{count_row}` игроках гильдии\n'
+					# возьмем last_update у первого игрока в списке (предполагаем что у всех должно быть одинаково)
+					# last_update = datetime.fromtimestamp(row[0]['last_update']).strftime('%d-%m-%Y %H:%M:%S')
+					last_update = row[0]['last_update']
+					passed_time = current_time-last_update
 
+					if passed_time<60:
+						passed_time_text = f"{passed_time} сек"
+					elif passed_time<3600:
+						passed_time_text = f"{passed_time//60} мин"
+					elif passed_time<86400:
+						passed_time_text = f"{passed_time//3600} ч"
+					else:
+						passed_time_text = "более 1 дня"
+
+					msg = f'(последнее обновление базы *{passed_time_text} назад*)\n\n'
+					msg += f'У меня есть информация о `{count_row}` игроках гильдии\n\n'
+
+					# для начала пройдемся по всем игрокам и соберем инфу у кого уже есть и на сколько звезд
 					for r in row: # каждая отдельная имеющаяся стата
 						if pers_id in r: # искомый легендарный персонаж имеется в стате игрока
 							if r[pers_id] == 7: # и у него 7 звезд
 								already_have7.append(r['player_name'])
 							elif r[pers_id] == 6:
 								already_have6.append(r['player_name'])
-								not_have.append(r['player_name'])
+								not_have7.append(r['player_name'])
 							elif r[pers_id] == 5:
 								already_have5.append(r['player_name'])
-								not_have.append(r['player_name'])
+								not_have7.append(r['player_name'])
 							else:
-								not_have.append(r['player_name'])
+								not_have7.append(r['player_name'])
 						else:
-							not_have.append(r['player_name'])
+							not_have7.append(r['player_name'])
 
-					msg += f'Из них `{len(already_have7)}` уже имеют данного персонажа на 7 звезд\n'
+					# в итоге в not_have7 будут все, у кого не на 7 звезд
+
+					msg += f'Из них *{len(already_have7)}* уже имеют данного персонажа на `7` звезд:\n_{", ".join(already_have7)}_\n\n'
 					if len(already_have6) > 0:
-						msg += f'А еще `{len(already_have6)}` — на 6 звезд\n'
+						msg += f'Еще *{len(already_have6)}* — на `6` звезд:\n_{", ".join(already_have6)}_\n\n'
 					if len(already_have5) > 0:
-						msg += f'И еще `{len(already_have5)}` — на 5 звезд\n'
-					msg += f'\n'
+						msg += f'И еще *{len(already_have5)}* — на `5` звезд:\n_{", ".join(already_have5)}_\n\n'
+					
+					# msg += f'\n'
 
-					if len(not_have) > 0:
+					if len(not_have7) > 0:
 
-						msg += f'Готовность остальных к тому, чтобы взять этого персонажа:\n'
-						msg += f'(определяется только по нужном количеству звезд) \n\n'
+						msg += f'Кто во время следующего события сможет взять этого персонажа или улучшить по звездам\n'
+						msg += f'(определяется только по нужном количеству звезд): \n\n'
 
-						for nh in not_have: # пробежимся по каждому игроку, у которого нет (nh = swgoh name)
+						msg_improve = ""
 
-							msg += f"`{nh}`: "
+						for nh in not_have7: # пробежимся по каждому игроку, у которого не на 7 звезд (nh = swgoh name) и проверим, сможет ли улучшить результат
+
 							found_user_stat = collection_stats.find_one({"player_name": nh})
 							stars = {}
 
@@ -144,22 +167,35 @@ def handler_ready(bot,message,my_logger):
 
 								msg += msgg
 
-							elif len(full_stars)>=5: # для легендарного рейда нужно 5 любых персонажей на 5 звезд
-								msg += f" {STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI} ГОТОВ!\n"
+							elif len(full_stars)>=5: # стандартный вариант - нужно 5 любых подходящих на максимум звезд
+								msg_improve += f"`{nh}`: {STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI} ГОТОВ!\n"
 
-							elif pers_id == "MILLENNIUMFALCON":
+							elif len(six_stars)>=5 and pers_id in UNLOCKS_AT_FIVE and nh not in already_have6: 
+								msg_improve += f"`{nh}`: *готов на* \u2605 \u2605 \u2605 \u2605 \u2605 \u2605 \u2606 \n"
+
+							elif len(five_stars)>=5 and pers_id in UNLOCKS_AT_FIVE and nh not in already_have5 and nh not in already_have6: 
+								msg_improve += f"`{nh}`: *готов на* \u2605 \u2605 \u2605 \u2605 \u2605 \u2606 \u2606 \n"
+
+							elif pers_id == "MILLENNIUMFALCON": 
 								if len(full_stars) == 4:
-									msg += f" {STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI} ГОТОВ!\n"
+									msg_improve += f"`{nh}`: {STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI} ГОТОВ!\n"
 								elif len(six_stars) == 4 and nh not in already_have6:
-									msg += f" *готов на* \u2605 \u2605 \u2605 \u2605 \u2605 \u2605 \u2606 \n"
-								elif len(five_stars) == 4 and nh not in already_have5:
-									msg += f" *готов на* \u2605 \u2605 \u2605 \u2605 \u2605 \u2606 \u2606 \n"
+									msg_improve += f"`{nh}`: *готов на* \u2605 \u2605 \u2605 \u2605 \u2605 \u2605 \u2606 \n"
+								elif len(five_stars) == 4 and nh not in already_have5 and nh not in already_have6:
+									msg_improve += f"`{nh}`: *готов на* \u2605 \u2605 \u2605 \u2605 \u2605 \u2606 \u2606 \n"
 								else:
-									msg += f" --------------\n"
+									pass
+									# msg_improve += f"`{nh}`: --------------\n"
 
 							
 							else:
-								msg += f" --------------\n"
+								pass
+								# msg_improve += f"`{nh}`: --------------\n"
+
+					if msg_improve == "":
+						msg_improve = "_Никто больше не готов к взятию или улучшению_"
+
+					msg += msg_improve
 
 					bot.reply_to(message, msg, parse_mode='Markdown')
 					my_logger.info("Readiness stat sent")

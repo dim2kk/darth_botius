@@ -1,6 +1,6 @@
 SWGOH_URL = 'https://swgoh.gg/api/player'
 SWGOH_GUILD_URL = 'https://swgoh.gg/api/guild/30876'
-ADMINS = [48839336, 504507571, 326656067, 238761218, 505901226]  # я, морт, гном, анадерон, механик
+ADMINS = [48839336, 504507571, 326656067, 505901226]  # я, морт, гном, механик
 OWNER = 48839336 # dim2k
 STAR_EMOJI = '⭐'
 
@@ -17,6 +17,7 @@ LEGENDARIES = {
 				"CHEWBACCALEGENDARY": "Chewbacca",
 				"JEDIKNIGHTREVAN": "Jedi Knight Revan",
 				"DARTHREVAN": "Darth Revan",
+				"PADMEAMIDALA": "Padme Amidala",
 				"HERMITYODA": "Hermit Yoda",
 				"WAMPA": "Wampa"
 			  }
@@ -58,12 +59,15 @@ REQS['DARTHREVAN'] = ["BASTILASHANDARK", "CANDEROUSORDO", "CARTHONASI", "HK47", 
 
 REQS['JEDIKNIGHTREVAN'] = ["BASTILASHAN", "JOLEEBINDO", "T3_M4", "MISSIONVAO", "ZAALBAR"]
 
+REQS['PADMEAMIDALA'] = ["ASAJVENTRESS", "GEONOSIANSOLDIER", "GEONOSIANSPY", "NUTEGUNRAY", "POGGLETHELESSER", "MAGNAGUARD", 
+						"GRIEVOUS", "SUNFAC", "B1BATTLEDROIDV2", "COUNTDOOKU", "DROIDEKA", "B2SUPERBATTLEDROID"]
+
 REQS['MILLENNIUMFALCON'] = ["HOUNDSTOOTH", "IG2000", "SLAVE1", "XANADUBLOOD"]
 
 REQS['CAPITALCHIMAERA'] = ["CAPITALMONCALAMARICRUISER", "GHOST", "PHANTOM2", "XWINGRED3", "XWINGRED2", "UWINGROGUEONE", "UWINGSCARIF"]
 
 UNLOCKS_AT_FIVE = ["MILLENNIUMFALCON", "R2D2_LEGENDARY", "BB8", "GRANDADMIRALTHRAWN", "C3POLEGENDARY",
-					"CHEWBACCALEGENDARY", "CAPITALCHIMAERA"]
+					"CHEWBACCALEGENDARY", "CAPITALCHIMAERA", "PADMEAMIDALA"]
 
 REQS_ALIASES = {
 
@@ -119,6 +123,12 @@ REQS_ALIASES = {
 	'химера': "CAPITALCHIMAERA",
 	'chimaera': "CAPITALCHIMAERA",
 
+	'падме': "PADMEAMIDALA",
+	'падла': "PADMEAMIDALA",
+	'padme': "PADMEAMIDALA",
+	'amidala': "PADMEAMIDALA",
+	'амидала': "PADMEAMIDALA",
+
 	'thrawn': "GRANDADMIRALTHRAWN",
 	'траун': "GRANDADMIRALTHRAWN"
 }
@@ -166,5 +176,6 @@ msg_ready_help += f'`!готовность бб8`\n'
 msg_ready_help += f'`!готовность палпатин`\n'
 msg_ready_help += f'`!готовность реван`\n'
 msg_ready_help += f'`!готовность древан`\n'
+msg_ready_help += f'`!готовность падме`\n'
 msg_ready_help += f'`!готовность сокол`\n'
 msg_ready_help += f'`!готовность химера`'
