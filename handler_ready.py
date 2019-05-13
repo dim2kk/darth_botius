@@ -83,12 +83,14 @@ def handler_ready(bot,message,my_logger):
 					
 					# msg += f'\n'
 
+					msg_improve = ""
+
 					if len(not_have7) > 0:
+
+						not_have7_copy = not_have7[:] # в этом листе будем держать список тех, кто остается (не сможет улучшить)
 
 						msg += f'Кто во время следующего события сможет взять этого персонажа или улучшить по звездам\n'
 						msg += f'(определяется только по нужном количеству звезд): \n\n'
-
-						msg_improve = ""
 
 						for nh in not_have7: # пробежимся по каждому игроку, у которого не на 7 звезд (nh = swgoh name) и проверим, сможет ли улучшить результат
 
@@ -141,61 +143,79 @@ def handler_ready(bot,message,my_logger):
 								if len(chimaera_needs_full) == 3:
 									for om in need_one_more_ship_list:
 										if om in full_stars:
-											msgg = f" {STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI} ГОТОВ!\n"
+											msgg = f"`{nh}`: {STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}\n"
+											not_have7_copy.remove(nh)
 											break
 										else:
-											msgg = f" --------------\n"
+											pass
+											#msgg = f" --------------\n"
 
 								elif len(chimaera_needs_six) == 3:
 									for om in need_one_more_ship_list:
 										if om in six_stars:
-											msgg = f" *готов на* \u2605 \u2605 \u2605 \u2605 \u2605 \u2605 \u2606 \n"
+											msgg = f"`{nh}`: \u2605 \u2605 \u2605 \u2605 \u2605 \u2605 \u2606 \n"
+											not_have7_copy.remove(nh)
 											break
 										else:
-											msgg = f" --------------\n"
+											pass
+											#msgg = f" --------------\n"
 
 								elif len(chimaera_needs_five) == 3:
 									for om in need_one_more_ship_list:
 										if om in five_stars:
-											msgg = f" *готов на* \u2605 \u2605 \u2605 \u2605 \u2605 \u2606 \u2606 \n"
+											msgg = f"`{nh}`: \u2605 \u2605 \u2605 \u2605 \u2605 \u2606 \u2606 \n"
+											not_have7_copy.remove(nh)
 											break
 										else:
-											msgg = f" --------------\n"
+											pass
+											#msgg = f" --------------\n"
 
 								else:
-									msgg = f" --------------\n"
+									pass
+									#msgg = f" --------------\n"
 
-								msg += msgg
+								msg_improve += msgg
 
 							elif len(full_stars)>=5: # стандартный вариант - нужно 5 любых подходящих на максимум звезд
-								msg_improve += f"`{nh}`: {STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI} ГОТОВ!\n"
+								msg_improve += f"`{nh}`: {STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}\n"
+								not_have7_copy.remove(nh)
 
 							elif len(six_stars)>=5 and pers_id in UNLOCKS_AT_FIVE and nh not in already_have6: 
-								msg_improve += f"`{nh}`: *готов на* \u2605 \u2605 \u2605 \u2605 \u2605 \u2605 \u2606 \n"
+								msg_improve += f"`{nh}`: \u2605 \u2605 \u2605 \u2605 \u2605 \u2605 \u2606 \n"
+								not_have7_copy.remove(nh)
 
 							elif len(five_stars)>=5 and pers_id in UNLOCKS_AT_FIVE and nh not in already_have5 and nh not in already_have6: 
-								msg_improve += f"`{nh}`: *готов на* \u2605 \u2605 \u2605 \u2605 \u2605 \u2606 \u2606 \n"
+								msg_improve += f"`{nh}`: \u2605 \u2605 \u2605 \u2605 \u2605 \u2606 \u2606 \n"
+								not_have7_copy.remove(nh)
 
 							elif pers_id == "MILLENNIUMFALCON": 
 								if len(full_stars) == 4:
-									msg_improve += f"`{nh}`: {STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI} ГОТОВ!\n"
+									msg_improve += f"`{nh}`: {STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}\n"
+									not_have7_copy.remove(nh)
 								elif len(six_stars) == 4 and nh not in already_have6:
-									msg_improve += f"`{nh}`: *готов на* \u2605 \u2605 \u2605 \u2605 \u2605 \u2605 \u2606 \n"
+									msg_improve += f"`{nh}`: \u2605 \u2605 \u2605 \u2605 \u2605 \u2605 \u2606 \n"
+									not_have7_copy.remove(nh)
 								elif len(five_stars) == 4 and nh not in already_have5 and nh not in already_have6:
-									msg_improve += f"`{nh}`: *готов на* \u2605 \u2605 \u2605 \u2605 \u2605 \u2606 \u2606 \n"
+									msg_improve += f"`{nh}`: \u2605 \u2605 \u2605 \u2605 \u2605 \u2606 \u2606 \n"
+									not_have7_copy.remove(nh)
 								else:
 									pass
 									# msg_improve += f"`{nh}`: --------------\n"
 
-							
 							else:
 								pass
 								# msg_improve += f"`{nh}`: --------------\n"
 
 					if msg_improve == "":
-						msg_improve = "_Никто больше не готов к взятию или улучшению_"
+						if count_row == len(already_have7):
+							msg_improve = "`ВСЕ ИГРОКИ ГИЛЬДИИ ЗАКОНЧИЛИ СБОР ПЕРСОНАЖА`"
+						else:
+							msg_improve = "_Никто больше не готов_\n"
 
 					msg += msg_improve
+
+					if len(not_have7_copy) > 0:
+						msg += f'\nСписок тех, кто *не готов*:\n_{", ".join(not_have7_copy)}_'
 
 					bot.reply_to(message, msg, parse_mode='Markdown')
 					my_logger.info("Readiness stat sent")
