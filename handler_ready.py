@@ -85,7 +85,7 @@ def handler_ready(bot,message,my_logger):
 
 					msg_improve = ""
 
-					if len(not_have7) > 0:
+					if len(not_have7) > 0: # есть игроки, у которых не на 7 звезд
 
 						not_have7_copy = not_have7[:] # в этом листе будем держать список тех, кто остается (не сможет улучшить)
 
@@ -97,9 +97,9 @@ def handler_ready(bot,message,my_logger):
 							found_user_stat = collection_stats.find_one({"player_name": nh})
 							stars = {}
 
-							for req in REQS[pers_id]:
+							for req in REQS[pers_id]: # возьмем список требований для получения и сохраним в stars значения по количеству звезд у нужных
 								if req in found_user_stat:
-									stars[req] = found_user_stat[req]
+									stars[req] = int(found_user_stat[req])
 								else:
 									stars[req] = 0
 
@@ -108,7 +108,7 @@ def handler_ready(bot,message,my_logger):
 							full_stars = []
 							six_stars = []
 							five_stars = []
-							for key,value in stars.items(): # теперь посчитаем сколько из них имеют 7 звезд
+							for key,value in stars.items(): # теперь составим список какие из них имеют 7, 6, 5 звезд
 								if value == 7:
 									full_stars.append(key)
 									six_stars.append(key)
@@ -124,57 +124,87 @@ def handler_ready(bot,message,my_logger):
 
 								base_ship_list = ["CAPITALMONCALAMARICRUISER", "GHOST", "PHANTOM2"]
 								need_one_more_ship_list = ["XWINGRED3", "XWINGRED2", "UWINGROGUEONE", "UWINGSCARIF"]
+								can_improve_to = 0 # по умолчанию считаем что не сможет улучшить
 
-								chimaera_needs_full = []
-								chimaera_needs_six = []
-								chimaera_needs_five = []
+								### --------- проверка на 7 ------------ ####
+								#############################################
 
+								# проверим возможность получения на 7 звезд. Т.к. игрок из списка nh - значит у него точно не на 7
 								for bs in base_ship_list:
-									if bs in full_stars:
-										chimaera_needs_full.append(bs)
-										chimaera_needs_six.append(bs)
-										chimaera_needs_five.append(bs)
-									elif bs in six_stars:
-										chimaera_needs_six.append(bs)
-										chimaera_needs_five.append(bs)
-									elif bs in five_stars:
-										chimaera_needs_five.append(bs)
+									if stars[bs] == 7:
+										can_improve_to = 7 # если нужный корабль на 7 звезд, то пока считаем что осилит 7
+									else:
+										can_improve_to = 0 # иначе все-таки пока 0 и выходим из цикла
+										break
 
-								if len(chimaera_needs_full) == 3:
-									for om in need_one_more_ship_list:
-										if om in full_stars:
-											msgg = f"`{nh}`: {STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}\n"
-											not_have7_copy.remove(nh)
+								if can_improve_to == 7: # после прохода по всем базовым кораблям пока имеем готового на 7. Проверим еще один корабль из доп списка
+									
+									found_one_more = False
+									for nom in need_one_more_ship_list:
+										if stars[nom] == 7: # нашли первый нужный корабль на 7, выходим из цикла
+											found_one_more = True
 											break
-										else:
-											pass
-											#msgg = f" --------------\n"
 
-								elif len(chimaera_needs_six) == 3:
-									for om in need_one_more_ship_list:
-										if om in six_stars:
-											msgg = f"`{nh}`: \u2605 \u2605 \u2605 \u2605 \u2605 \u2605 \u2606 \n"
-											not_have7_copy.remove(nh)
+									if not found_one_more:
+										can_improve_to = 0
+
+								#############################################
+
+								# на данном этапе имеем can_improve_to либо 7, либо 0
+
+								# если все еще 0, то проверим возможность улучшения до 6 звезд, если уже не 6
+								if can_improve_to == 0 and nh not in already_have6:
+									
+									for bs in base_ship_list:
+										if stars[bs] >= 6:
+											can_improve_to = 6 
+										else:
+											can_improve_to = 0 
 											break
-										else:
-											pass
-											#msgg = f" --------------\n"
 
-								elif len(chimaera_needs_five) == 3:
-									for om in need_one_more_ship_list:
-										if om in five_stars:
-											msgg = f"`{nh}`: \u2605 \u2605 \u2605 \u2605 \u2605 \u2606 \u2606 \n"
-											not_have7_copy.remove(nh)
+									if can_improve_to == 6:
+										
+										found_one_more = False
+										for nom in need_one_more_ship_list:
+											if stars[nom] >= 6: 
+												found_one_more = True
+												break
+
+										if not found_one_more:
+											can_improve_to = 0
+
+
+								# если все еще 0, то проверим возможность улучшения до 5
+								if can_improve_to == 0 and nh not in already_have6 and nh not in already_have5:
+									
+									for bs in base_ship_list:
+										if stars[bs] >= 5:
+											can_improve_to = 5 
+										else:
+											can_improve_to = 0 
 											break
-										else:
-											pass
-											#msgg = f" --------------\n"
 
-								else:
-									pass
-									#msgg = f" --------------\n"
+									if can_improve_to == 5:
+										
+										found_one_more = False
+										for nom in need_one_more_ship_list:
+											if stars[nom] >= 5: 
+												found_one_more = True
+												break
+												
+										if not found_one_more:
+											can_improve_to = 0
 
-								msg_improve += msgg
+								if can_improve_to == 7:
+									msg_improve += f"`{nh}`: {STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}\n"
+									not_have7_copy.remove(nh)
+								elif can_improve_to == 6:
+									msg_improve += f"`{nh}`: \u2605 \u2605 \u2605 \u2605 \u2605 \u2605 \u2606 \n"
+									not_have7_copy.remove(nh)
+								elif can_improve_to == 5:
+									msg_improve += f"`{nh}`: \u2605 \u2605 \u2605 \u2605 \u2605 \u2606 \u2606 \n"
+									not_have7_copy.remove(nh)
+
 
 							elif len(full_stars)>=5: # стандартный вариант - нужно 5 любых подходящих на максимум звезд
 								msg_improve += f"`{nh}`: {STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}\n"
@@ -215,7 +245,7 @@ def handler_ready(bot,message,my_logger):
 					msg += msg_improve
 
 					if len(not_have7_copy) > 0:
-						msg += f'\nСписок тех, кто *не готов*:\n_{", ".join(not_have7_copy)}_'
+						msg += f'\nСписок тех, кто *не готов улучшить или получить*:\n_{", ".join(not_have7_copy)}_'
 
 					bot.reply_to(message, msg, parse_mode='Markdown')
 					my_logger.info("Readiness stat sent")
