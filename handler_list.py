@@ -5,7 +5,14 @@ from const import *
 mongo_client = MongoClient()
 mongo_db = mongo_client.darth
 collection_users = mongo_db.users
+collection_users_twin = mongo_db.users_twin
 collection_stats = mongo_db.users_stats
+
+# mongo_db.users
+# {'user': telega_username, 'ally_code': ally_code, 'swgoh_name': swgoh_name}
+
+# mongo_db.users_twin
+# {'user': telega_username, 'ally_code': ally_code, 'swgoh_name': swgoh_name}
 
 def handler_list(bot,message,my_logger):
 
@@ -29,6 +36,16 @@ def handler_list(bot,message,my_logger):
 			bot.send_message(message.from_user.id, msg)
 		else:
 			bot.send_message(message.chat.id, msg)
+
+		if message.chat.id in ADMINS:
+			# дополнительно отправим список твинов, если это приват с админом
+			row = collection_users_twin.find().sort([('user', pymongo.DESCENDING)])
+			msg = 'Список твинов:\n\n'
+			for r in row:
+				msg += f"{r['user']} ({r['swgoh_name']} - {r['ally_code']})\n"
+
+			bot.send_message(message.chat.id, msg)
+
 		my_logger.info("List sent")
 
 	except Exception as e:

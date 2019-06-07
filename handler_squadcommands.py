@@ -8,9 +8,13 @@ from const import *
 mongo_client = MongoClient()
 mongo_db = mongo_client.darth
 collection_users = mongo_db.users
+collection_users_twin = mongo_db.users_twin
 collection_stats = mongo_db.users_stats
 collection_squad_commands = mongo_db.squad_commands
 collection_squad_commands_overview = mongo_db.squad_commands_overview
+
+# mongo_db.users_twin
+# {'user': telega_username, 'ally_code': ally_code, 'swgoh_name': swgoh_name}
 
 # (mongo_db.squad_commands) 
 #  new_squad_command = {"squad_pos": squad_pos, "squad_number": squad_number, "player_name": cur_player, "unit": cur_unit}
@@ -167,7 +171,7 @@ def handler_list_commands_personal(bot,message,my_logger):
 
 		count_rows = collection_squad_commands.count_documents({"player_name": user})
 
-		if count_rows == 0: # такого пользователя не нашли, а может был указан айди в телеге?
+		if count_rows == 0: # не нашли команд для такого игрока, а может был указан айди в телеге?
 			user = user.replace("@", "")
 			found_user = collection_users.find_one({"user": user})
 			if found_user is not None:
@@ -189,23 +193,48 @@ def handler_list_commands_personal(bot,message,my_logger):
 					r['squad_pos'] = "НИЗ"
 
 				full_squad_pn = f"{r['squad_pos'].upper()}-{r['squad_number']}"
-
 				msg += f"{full_squad_pn} — {r['player_name']} — {r['unit']}\n"
-
-				if len(msg) > 3000:
-					bot.send_message(message.chat.id, msg, parse_mode='Markdown')
-					msg = "... продолжение ... \n"
 
 			if (message.from_user.id == message.chat.id): # это приват! значит можно отправлять команды 
 				bot.send_message(message.chat.id, msg, parse_mode='Markdown')
 			else: # не приват, а канал. Больше нельзя запрашивать команды в общем канале
 				bot.reply_to(message, "Теперь `!команды` можно запросить только в привате у бота!", parse_mode='Markdown')
 
-		else:
-			if (message.from_user.id == message.chat.id): # это приват! значит можно отправлять команды 
+		else: # все равно не нашли команд, скажем что для этого игрока их нет
+			if (message.from_user.id == message.chat.id): # это приват! значит можно отправлять сообщение 
 				bot.send_message(message.chat.id, f'Для "{user}" не найдено команд', parse_mode='Markdown')
 			else: # не приват, а канал. Больше нельзя запрашивать команды в общем канале
 				bot.reply_to(message, "Теперь `!команды` можно запросить только в привате у бота!", parse_mode='Markdown')
+
+
+		if message.text == "!команды": # если игрок просил сам на себя, то мы знаем его имя в телеге и можем так же проверить на команды для твинов
+			
+			username = message.from_user.username
+			found_user = collection_users_twin.find({"user": username})
+			
+			if found_user is not None:
+
+				for fu in found_user:
+
+					twin_user = fu['swgoh_name']
+					rows = collection_squad_commands.find({"player_name": twin_user})
+					msg = f"*Текущий список команд по взводам для {twin_user}:*\n\n"
+
+					for r in rows:
+
+						if r['squad_pos'] == "1":
+							r['squad_pos'] = "ВЕРХ"
+						elif r['squad_pos'] == "2":
+							r['squad_pos'] = "СЕРЕДИНА"
+						elif r['squad_pos'] == "3":
+							r['squad_pos'] = "НИЗ"
+
+						full_squad_pn = f"{r['squad_pos'].upper()}-{r['squad_number']}"
+						msg += f"{full_squad_pn} — {r['player_name']} — {r['unit']}\n"
+
+					if (message.from_user.id == message.chat.id): # это приват! значит можно отправлять команды 
+						bot.send_message(message.chat.id, msg, parse_mode='Markdown')
+
 
 	except Exception as e:
 

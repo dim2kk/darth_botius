@@ -8,7 +8,14 @@ from const import *
 mongo_client = MongoClient()
 mongo_db = mongo_client.darth
 collection_users = mongo_db.users
+collection_users_twin = mongo_db.users_twin
 collection_stats = mongo_db.users_stats
+
+# mongo_db.users
+# {'user': telega_username, 'ally_code': ally_code, 'swgoh_name': swgoh_name}
+
+# mongo_db.users_twin
+# {'user': telega_username, 'ally_code': ally_code, 'swgoh_name': swgoh_name}
 
 def handler_reg(bot,message,my_logger):
 
@@ -16,7 +23,7 @@ def handler_reg(bot,message,my_logger):
 
 		RREG = False
 		if (message.text.startswith('!rreg') or message.text.startswith('!ррег')) and message.from_user.id in ADMINS:
-			RREG = True
+			RREG = True  # админский бэкдор для форсированной регистрации !rreg tgusername allycode nick name name name in game
 
 		msg = ""
 		ally_code = False
@@ -72,9 +79,9 @@ def handler_reg(bot,message,my_logger):
 
 
 		# далее исполняется только если код союзника = девятизначное число в ally_code, а также установлен telega_username
-		if ally_code and telega_username: # получим данные из swgoh.gg
+		if ally_code and telega_username:
 			
-			if not RREG:
+			if not RREG: # получим данные из swgoh.gg
 				r = requests.get(f'{SWGOH_URL}/{ally_code}')
 				jdata = r.json()
 				if jdata:
@@ -91,10 +98,11 @@ def handler_reg(bot,message,my_logger):
 				my_logger.info("Ally code not found")
 				return
 
-			# проверим, может игрок уже зарегистрирован
+			# теперь так же имеем player_name
 
+			# проверим, может игрок уже зарегистрирован
 			found_user = collection_users.find_one({'user': telega_username})
-			if found_user:
+			if found_user: # действительно, уже 
 				msg = f'Пользователь {telega_username} уже зарегистрирован! '
 				msg += f'Если нужно изменить информацию - сначала надо удалить пользователя через команду `!forget {telega_username}`'
 				bot.send_message(message.chat.id, msg, parse_mode="Markdown")
@@ -106,6 +114,53 @@ def handler_reg(bot,message,my_logger):
 				collection_users.insert_one(new_user)
 				bot.send_message(message.chat.id, f'Пользователь {telega_username} успешно зарегистрирован! Найденное имя в SWGOH: {player_name}')
 				my_logger.info(f"Registration successful! Found SWGOH name {player_name}")
+
+	except Exception as e:
+
+		bot.reply_to(message, "Произошла ошибка, попробуйте позже!")
+		my_logger.info(f"Something went wrong during !reg: {e}")
+
+
+
+
+def handler_twin_reg(bot,message,my_logger):
+
+	# бэкдор для регистрации двойника, доступен только админам
+
+	try:
+
+		ally_code = False
+		telega_username = False
+
+		s = message.text.split()
+
+		if len(s)>3: # должно быть передано не менее 4 параметров, последний из которых - имя в игре: !twinreg tgusername allycode nick name name name in game
+
+			if re.match(r"(\D*\d){9}", s[2]) and len(s[2]) == 9: # проверим что код = девятизначное число
+				ally_code = s[2]
+				telega_username = s[1].replace("@","")
+				game_nick = ""
+				for i in range(3,len(s)):
+					game_nick += f"{s[i]} "
+				game_nick = game_nick.rstrip()
+				bot.reply_to(message, f'Попытка зарегистрировать {telega_username} с кодом {ally_code} и ником в игре "{game_nick}"')
+			else:
+				bot.reply_to(message, 'Регистрация невозможна! Корректное использование:\n`!twinreg username code nick_in_game', parse_mode="Markdown")
+				my_logger.info("Registration not possible, wrong command format")
+
+		else:
+			bot.reply_to(message, 'Регистрация невозможна! Корректное использование:\n`!twinreg username code nick_in_game', parse_mode="Markdown")
+			my_logger.info("Registration not possible, wrong command format")
+
+
+		# далее исполняется только если код союзника = девятизначное число в ally_code, а также установлен telega_username + game_nick
+		if ally_code and telega_username and game_nick:
+			
+			new_user = {'user': telega_username, 'ally_code': ally_code, 'swgoh_name': game_nick}
+			collection_users_twin.insert_one(new_user)
+			bot.send_message(message.chat.id, f'Пользователь {telega_username} успешно зарегистрирован в качестве дубля! Имя в SWGOH: {game_nick}')
+			my_logger.info(f"Twin registration successful! SWGOH name {game_nick}")
+
 
 	except Exception as e:
 

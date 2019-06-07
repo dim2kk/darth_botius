@@ -111,11 +111,17 @@ def handle_text(message: Message):
 		elif message.text.startswith('!reg') or message.text.startswith('!рег'): # возможные варианты: !reg code, !reg name code
 			handler_reg(bot,message,my_logger)
 
+		elif message.text.startswith('!twinreg') and message.from_user.id in ADMINS: # регистрация твина
+			handler_twin_reg(bot,message,my_logger)
+
 		elif (message.text.startswith('!rreg') or message.text.startswith('!ррег')) and message.from_user.id in ADMINS: # вариация для администратора
 			handler_reg(bot,message,my_logger)
 			
 		elif (message.text.startswith('!forget') or message.text.startswith('!забыть')) and message.from_user.id in ADMINS:
 			handler_forget(bot,message,my_logger)
+
+		elif message.text.startswith('!twinforget') and message.from_user.id in ADMINS:
+			handler_twin_forget(bot,message,my_logger)
 
 		elif message.text.startswith('!promote') and message.from_user.id == OWNER:
 			user = message.text[9:].replace("@","")
