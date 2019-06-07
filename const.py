@@ -129,6 +129,15 @@ REQS_ALIASES = {
 	'amidala': "PADMEAMIDALA",
 	'амидала': "PADMEAMIDALA",
 
+	'хермит': "HERMITYODA",
+	'hermit': "HERMITYODA",
+	'хода': "HERMITYODA",
+	'hoda': "HERMITYODA",
+	'отшельник': "HERMITYODA",
+
+	'вампа': "WAMPA",
+	'wampa': "WAMPA",
+
 	'thrawn': "GRANDADMIRALTHRAWN",
 	'траун': "GRANDADMIRALTHRAWN"
 }
