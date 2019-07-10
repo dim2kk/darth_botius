@@ -19,7 +19,8 @@ LEGENDARIES = {
 				"DARTHREVAN": "Darth Revan",
 				"PADMEAMIDALA": "Padme Amidala",
 				"HERMITYODA": "Hermit Yoda",
-				"WAMPA": "Wampa"
+				"WAMPA": "Wampa",
+				"DARTHTRAYA": "Darth Traya"
 			  }
 
 REQS = {}
@@ -138,6 +139,9 @@ REQS_ALIASES = {
 	'вампа': "WAMPA",
 	'wampa': "WAMPA",
 
+	'трея': "DARTHTRAYA",
+	'traya': "DARTHTRAYA",
+
 	'thrawn': "GRANDADMIRALTHRAWN",
 	'траун': "GRANDADMIRALTHRAWN"
 }
@@ -189,4 +193,7 @@ msg_ready_help += f'`!готовность реван`\n'
 msg_ready_help += f'`!готовность древан`\n'
 msg_ready_help += f'`!готовность падме`\n'
 msg_ready_help += f'`!готовность сокол`\n'
-msg_ready_help += f'`!готовность химера`'
+msg_ready_help += f'`!готовность химера`\n'
+msg_ready_help += f'`!готовность трея`\n'
+msg_ready_help += f'`!готовность вампа`\n'
+msg_ready_help += f'`!готовность хода`'

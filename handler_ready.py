@@ -36,6 +36,7 @@ def handler_ready(bot,message,my_logger):
 				already_have6 = []
 				already_have5 = []
 				not_have7 = []
+				not_have_at_all = []
 				current_time = math.floor(time.time())
 
 				# возьмем last_update у первого игрока в списке (предполагаем что у всех должно быть одинаково)
@@ -70,6 +71,7 @@ def handler_ready(bot,message,my_logger):
 							not_have7.append(r['player_name'])
 					else:
 						not_have7.append(r['player_name'])
+						not_have_at_all.append(r['player_name'])
 
 				# в итоге в not_have7 будут все, у кого не на 7 звезд
 
@@ -78,8 +80,10 @@ def handler_ready(bot,message,my_logger):
 					msg += f'Еще *{len(already_have6)}* — на `6` звезд:\n_{", ".join(already_have6)}_\n\n'
 				if len(already_have5) > 0:
 					msg += f'И еще *{len(already_have5)}* — на `5` звезд:\n_{", ".join(already_have5)}_\n\n'
-				
-				# msg += f'\n'
+
+
+				if not pers_id in REQS: # если не нужно проверять готовность к ивенту (вампа, хода, трея), то сразу напишем у кого нет вообще
+					msg += f'Список тех, у кого нет вообще:\n_{", ".join(not_have_at_all)}_'
 
 				# если это персонаж, которого нужно брать через ивенты - проверим готовность к ивенту
 				if pers_id in REQS:
