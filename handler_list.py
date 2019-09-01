@@ -23,7 +23,7 @@ def handler_list(bot,message,my_logger):
 		msg = 'Список всех зарегистрированных пользователей:\n\n'
 		for r in row:
 			msg += f"{r['swgoh_name']} - @{r['user']} [{r['ally_code']}]"
-			if message.chat.id == OWNER and 'tele_id' in r.keys():
+			if message.chat.id == OWNER and 'tele_id' in r.keys() and message.text == "!listfull":
 				msg += f" [tg {r['tele_id']}]"
 			msg += "\n"
 
