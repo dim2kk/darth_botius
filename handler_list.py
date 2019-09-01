@@ -18,16 +18,14 @@ def handler_list(bot,message,my_logger):
 
 	try:
 
-		row = collection_users.find().sort([('is_admin', pymongo.DESCENDING), ('tele_id', pymongo.DESCENDING)])
+		row = collection_users.find().sort([('swgoh_name', pymongo.ASCENDING)])
 		count_row = collection_users.count_documents({})
 		msg = 'Список всех зарегистрированных пользователей:\n\n'
 		for r in row:
-			if message.chat.id == OWNER and 'is_admin' in r.keys():
-			 	msg += f"{STAR_EMOJI} "
-			msg += f"@{r['user']}"
+			msg += f"{r['swgoh_name']} - @{r['user']} [{r['ally_code']}]"
 			if message.chat.id == OWNER and 'tele_id' in r.keys():
 				msg += f" [tg {r['tele_id']}]"
-			msg += f" ({r['swgoh_name']} - {r['ally_code']})\n"
+			msg += "\n"
 
 		if message.from_user.id!=message.chat.id:
 			bot.reply_to(message, "Список можно запросить только в личке с ботом")
@@ -40,7 +38,7 @@ def handler_list(bot,message,my_logger):
 			row = collection_users_twin.find().sort([('user', pymongo.DESCENDING)])
 			msg = 'Список твинов:\n\n'
 			for r in row:
-				msg += f"{r['user']} ({r['swgoh_name']} - {r['ally_code']})\n"
+				msg += f"{r['swgoh_name']} - @{r['user']} [{r['ally_code']}]\n"
 
 			bot.send_message(message.chat.id, msg)
 
