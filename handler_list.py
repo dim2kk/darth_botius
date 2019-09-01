@@ -22,17 +22,15 @@ def handler_list(bot,message,my_logger):
 		count_row = collection_users.count_documents({})
 		msg = 'Список всех зарегистрированных пользователей:\n\n'
 		for r in row:
-			if message.chat.id == OWNER and 'tele_id' in r.keys():
-				msg += "☞ "
 			if message.chat.id == OWNER and 'is_admin' in r.keys():
 			 	msg += f"{STAR_EMOJI} "
-			msg += f"{r['user']}"
+			msg += f"@{r['user']}"
 			if message.chat.id == OWNER and 'tele_id' in r.keys():
-				msg += f" [id{r['tele_id']}]"
+				msg += f" [tg {r['tele_id']}]"
 			msg += f" ({r['swgoh_name']} - {r['ally_code']})\n"
 
-		if count_row>35 and message.from_user.id!=message.chat.id:
-			bot.reply_to(message, "Список слишком длинный, отправил в личку")
+		if message.from_user.id!=message.chat.id:
+			bot.reply_to(message, "Список можно запросить только в личке с ботом")
 			bot.send_message(message.from_user.id, msg)
 		else:
 			bot.send_message(message.chat.id, msg)

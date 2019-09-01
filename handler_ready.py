@@ -53,7 +53,7 @@ def handler_ready(bot,message,my_logger):
 				else:
 					passed_time_text = "более 1 дня"
 
-				msg = f'(последнее обновление базы *{passed_time_text} назад*)\n\n'
+				msg = f'(обновлено с сайта swgoh.gg *{passed_time_text} назад*)\n\n'
 				msg += f'У меня есть информация о `{count_row}` игроках гильдии\n\n'
 
 				# для начала пройдемся по всем игрокам и соберем инфу у кого уже есть и на сколько звезд

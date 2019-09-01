@@ -148,7 +148,7 @@ def handle_text(message: Message):
 		elif message.text.startswith('!stat') or message.text.startswith('!стат'):
 			handler_stat(bot,message,my_logger)
 			
-		elif (message.text == '!list' or message.text == '!лист' or message.text == '!список') and message.from_user.id in ADMINS:
+		elif message.text == '!list' or message.text == '!лист' or message.text == '!список':
 			handler_list(bot,message,my_logger)
 
 		elif (message.text.startswith('!up') or message.text.startswith('!ап')) and message.from_user.id in ADMINS:
