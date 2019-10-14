@@ -242,7 +242,52 @@ def handler_list_commands_personal(bot,message,my_logger):
 		my_logger.info(f"Something went wrong in handler_list_commands_personal: {e}")
 
 
-def handler_sendall_commands(bot,message,my_logger):
+def handler_list_toon_usage(bot,message,my_logger):
+
+	try:
+
+		if message.text == "!взводы":
+			bot.reply_to(message, "Нужно указать какого персонажа искать в командах на взводы.\nНапример: *!взводы Бастила Шан (Павшая)*", parse_mode='Markdown')
+		
+		else:
+
+			toon = message.text.replace("!взводы ", "")
+			# теперь в toon лежит типа полное название персонажа, попробуем найти его в командах взводов
+
+			count_rows = collection_squad_commands.count_documents({"unit": toon})
+			if count_rows == 0: # не найдено команд с таким персонажем
+				msg = f"Не найдено использование персонажа `{toon}` в командах на взводы.\n"
+				msg += f"Проверьте правильность указания персонажа.\nНапример *!взводы Бастила Шан (Павшая)*"
+				bot.reply_to(message, msg, parse_mode='Markdown')
+
+			else:
+
+				rows = collection_squad_commands.find({"unit": toon})
+				msg = f"Использование персонажа *{toon}* в командах на взводы:\n\n"
+
+				for r in rows:
+
+					if r['squad_pos'] == "1":
+						r['squad_pos'] = "ВЕРХ"
+					elif r['squad_pos'] == "2":
+						r['squad_pos'] = "СЕРЕДИНА"
+					elif r['squad_pos'] == "3":
+						r['squad_pos'] = "НИЗ"
+
+					full_squad_pn = f"{r['squad_pos'].upper()}-{r['squad_number']}"
+					msg += f"{full_squad_pn} — {r['player_name']} — {r['unit']}\n"
+
+				bot.reply_to(message, msg, parse_mode='Markdown')
+
+
+
+	except Exception as e:
+
+		bot.reply_to(message, "Произошла ошибка, попробуйте позже!")
+		my_logger.info(f"Something went wrong in handler_list_toon_usage: {e}")
+
+
+def handler_sendall_commands(bot,message,my_logger): # не используется
 
 	all_users = collection_stats.find()
 
@@ -282,7 +327,7 @@ def handler_sendall_commands(bot,message,my_logger):
 					my_logger.info(f'{ApiE} while trying to send message to {user}')
 
 
-def handler_white_check_mark(bot,message,my_logger):
+def handler_white_check_mark(bot,message,my_logger): # не используется
 
 	try:
 

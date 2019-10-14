@@ -124,6 +124,7 @@ def handle_text(message: Message):
 			handler_twin_forget(bot,message,my_logger)
 
 		elif message.text.startswith('!promote') and message.from_user.id == OWNER:
+			# не используется
 			user = message.text[9:].replace("@","")
 			found_user = collection_users.find_one({'user': user})
 			if found_user is not None:
@@ -135,6 +136,7 @@ def handle_text(message: Message):
 				my_logger.info(f"User {user} not found!")
 
 		elif message.text.startswith('!demote') and message.from_user.id == OWNER:
+			# не используется
 			user = message.text[8:].replace("@","")
 			found_user = collection_users.find_one({'user': user})
 			if found_user is not None:
@@ -176,6 +178,8 @@ def handle_text(message: Message):
 		elif message.text.startswith('!команды'):
 			handler_list_commands_personal(bot,message,my_logger)
 
+		elif message.text.startswith('!взводы'):
+			handler_list_toon_usage(bot,message,my_logger)
 			
 		else:
 			print(f'Unidentified command in message: {message.text}')
