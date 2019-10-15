@@ -158,10 +158,16 @@ def handler_fight(bot,message,my_logger):  # регистрация
 					af_id = af["_id"]
 					if "f1" in af: # первый участник уже зареген
 						af_f1 = af['f1']
-						if "f2" in af: # и второй тоже - значит зарегиться больше нельзя
+
+						if af_f1 == username and username != "dim2k":
+							# нельзя регистрироваться дважды
+							reg_pos = -1
+
+						elif "f2" in af: # и второй тоже - значит зарегиться больше нельзя
 							af_f2 = af['f2']
 							reg_pos = 0
-						else: 
+
+						else: # можно зарегистрировать второго игрока!
 							reg_pos = 2
 					else:
 						reg_pos = 1
@@ -171,6 +177,7 @@ def handler_fight(bot,message,my_logger):  # регистрация
 			reg_pos = 1
 
 		# на этом этапе мы определили, может ли игрок зарегистрироваться
+		# reg_pos = -1 -> уже зареген
 		# reg_pos = 0 -> не может
 		# reg_pos = 1 -> записи об активном бое не найдено или почему-то первым был зареген №2
 		# reg_pos = 2 -> найдена запись, где есть данные об игроке №1, значит можно зарегить последнего (второго) игрока
@@ -191,6 +198,10 @@ def handler_fight(bot,message,my_logger):  # регистрация
 					if 'f1' in af and 'f2' in af: # оба игрока зарегистрированы
 						bot.send_message(message.chat.id, f"Начинается бой между {af['f1']} и {af['f2']}!\nПервый ход за игроком №1 - *{af['f1']}*", parse_mode="Markdown")
 						collection_current_fight.update ( {"_id": af_id}, {"$set": {"next": "f1"}} )
+
+		elif reg_pos == -1:
+			bot.reply_to(message, f'Вы уже зарегистрированы на бой!', parse_mode="Markdown")
+			my_logger.info(f"Can't register {username} cos he is already on the list!")
 
 		else:
 			bot.reply_to(message, f'Невозможно зарегистрироваться, уже идет бой между *{af_f1}* и *{af_f2}*!', parse_mode="Markdown")
