@@ -39,6 +39,7 @@ from handler_list import *
 from handler_ready import *
 from handler_squadcommands import *
 from handler_checkregs import *
+from handler_game import *
 
 WEBHOOK_URL_BASE = "https://{}:{}".format(WEBHOOK_HOST, WEBHOOK_PORT)
 WEBHOOK_URL_PATH = "/{}/".format(TOKEN)
@@ -180,6 +181,23 @@ def handle_text(message: Message):
 
 		elif message.text.startswith('!взводы'):
 			handler_list_toon_usage(bot,message,my_logger)
+
+
+		### команды для игры в арену
+
+		elif message.text == ('!arena') or message.text == ('!арена'):  # вывести хелп
+			handler_arena(bot,message,my_logger)
+
+		elif message.text.startswith('!fight'):  # зарегиться
+			handler_fight(bot,message,my_logger)
+
+		elif message.text.startswith('!attack'): # атаковать
+			handler_attack(bot,message,my_logger)
+
+		elif message.text.startswith('!cancelfight') and message.from_user.id in ADMINS: # атаковать
+			handler_cancelfight(bot,message,my_logger)
+
+
 			
 		else:
 			print(f'Unidentified command in message: {message.text}')
