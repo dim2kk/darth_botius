@@ -8,12 +8,16 @@ mongo_client = MongoClient()
 mongo_db = mongo_client.darth
 collection_users = mongo_db.users
 collection_current_fight = mongo_db.current_fight
+collection_fights_stat = mongo_db.fights_stat
 
 # mongo_db.users
 # {'user': telega_username, 'ally_code': ally_code, 'swgoh_name': swgoh_name}
 
 # mongo_db.current_fight
 # {'id': fightid, 'f1': tgname, 'f2': tgname, 'f1_timestamp', 'f2_timestamp', 'f1_health', 'f2_health'}
+
+# mongo_db.fights_stat
+# {'f1': tgname, 'f2': tgname, 'winner': tgname, 'end_timestamp': timestamp}
 
 
 def handler_arena(bot,message,my_logger):
@@ -98,12 +102,21 @@ def handler_attack(bot,message,my_logger):  # атака
 					bot.send_message(message.chat.id, attack_msg, parse_mode="Markdown")
 					my_logger.info(f"{next_name} attacked {opp_name} dealing -{rand} damage [{opp_new_health}/{DEFAULT_HP}]")
 
-					if opp_new_health == 0: # есть победитель, завершаем бой
+					if opp_new_health == 0: 
+
+						# есть победитель, завершаем бой
 						msg = f"*{next_name}* побеждает! Ура!"
 						bot.send_message(message.chat.id, msg, parse_mode="Markdown")
 						collection_current_fight.remove({"_id": af_id})
 						my_logger.info(f"Fight between {next_name} and {opp_name} ended. Winner is {next_name}")
-					else: # нужно обновить инфу о текущем бое - новое здоровье оппонента, время действия текущего игрока и кто следующий next
+
+						# запишем инфу о бое в стату					
+						winner = { 'f1': next_name, 'f2': opp_name, 'winner': next_name, 'end_timestamp': time.time() }
+						collection_fights_stat.insert(winner)
+
+					else: 
+
+						# запишем результат удара и кто следующий бьет
 						collection_current_fight.update ( {'_id': af_id}, {'$set': {opp+'_health': opp_new_health, next+'_timestamp': time.time(), 'next': opp}} )
 						af[opp+"_health"] = opp_new_health
 						bot.send_message(message.chat.id, f"*{af['f1']}* \[{af['f1_health']}/{DEFAULT_HP}] против *{af['f2']}* \[{af['f2_health']}/{DEFAULT_HP}]\nСледующий ход за @{opp_name}", parse_mode="Markdown")
