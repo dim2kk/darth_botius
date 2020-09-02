@@ -1,7 +1,5 @@
 SWGOH_URL = 'https://swgoh.gg/api/player'
 SWGOH_GUILD_URL = 'https://swgoh.gg/api/guild/30876'
-ADMINS = [48839336, 504507571, 326656067, 505901226, 671267938, 508413121]  # я, морт, гном, механик, холи, ксендор
-OWNER = 48839336 # dim2k
 STAR_EMOJI = '⭐'
 
 FIGHT_TIMEOUT = 300 # 5 мин таймаут на реакцию

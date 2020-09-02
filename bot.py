@@ -102,30 +102,35 @@ def handle_text(message: Message):
 		else:
 			chat_name = message.chat.title
 
+		SENDER_IS_ADMIN = False
+		check_if_admin = collection_users.find_one({'tele_id': message.from_user.id})
+		if check_if_admin is not None:
+			if 'is_admin' in check_if_admin:
+				SENDER_IS_ADMIN = True
+
 		my_logger.info(f'Command issued: "{message.text}" by {message.from_user.username} in {chat_name}')
 
 		if message.text.lower() == "!help" or message.text.lower() == "!помощь":
 			bot.send_message(message.chat.id, help_msg, parse_mode="Markdown")
-			if message.from_user.id == message.chat.id and message.from_user.id in ADMINS: # это приват с админом!
+			if message.from_user.id == message.chat.id and SENDER_IS_ADMIN: # это приват с админом!
 				bot.send_message(message.chat.id, extra_help_msg, parse_mode="Markdown")
 
 		elif message.text.startswith('!reg') or message.text.startswith('!рег'): # возможные варианты: !reg code, !reg name code
 			handler_reg(bot,message,my_logger)
 
-		elif message.text.startswith('!twinreg') and message.from_user.id in ADMINS: # регистрация твина
+		elif message.text.startswith('!twinreg') and SENDER_IS_ADMIN: # регистрация твина
 			handler_twin_reg(bot,message,my_logger)
 
-		elif (message.text.startswith('!rreg') or message.text.startswith('!ррег')) and message.from_user.id in ADMINS: # вариация для администратора
+		elif (message.text.startswith('!rreg') or message.text.startswith('!ррег')) and SENDER_IS_ADMIN: # вариация для администратора
 			handler_reg(bot,message,my_logger)
 			
-		elif (message.text.startswith('!forget') or message.text.startswith('!забыть')) and message.from_user.id in ADMINS:
+		elif (message.text.startswith('!forget') or message.text.startswith('!забыть')) and SENDER_IS_ADMIN:
 			handler_forget(bot,message,my_logger)
 
-		elif message.text.startswith('!twinforget') and message.from_user.id in ADMINS:
+		elif message.text.startswith('!twinforget') and SENDER_IS_ADMIN:
 			handler_twin_forget(bot,message,my_logger)
 
 		elif message.text.startswith('!promote') and message.from_user.id == OWNER:
-			# не используется
 			user = message.text[9:].replace("@","")
 			found_user = collection_users.find_one({'user': user})
 			if found_user is not None:
@@ -137,7 +142,6 @@ def handle_text(message: Message):
 				my_logger.info(f"User {user} not found!")
 
 		elif message.text.startswith('!demote') and message.from_user.id == OWNER:
-			# не используется
 			user = message.text[8:].replace("@","")
 			found_user = collection_users.find_one({'user': user})
 			if found_user is not None:
@@ -154,26 +158,26 @@ def handle_text(message: Message):
 		elif message.text == '!list' or message.text == '!лист' or message.text == '!список' or message.text == '!listfull':
 			handler_list(bot,message,my_logger)
 
-		elif (message.text.startswith('!up') or message.text.startswith('!ап')) and message.from_user.id in ADMINS:
-			handler_up(bot,message,my_logger)
+		# elif (message.text.startswith('!up') or message.text.startswith('!ап')) and message.from_user.id in ADMINS:
+		# 	handler_up(bot,message,my_logger)
 
 		elif message.text.startswith('!готовность'):
 			handler_ready(bot,message,my_logger)
 
-		elif message.text.startswith('!clearcommands') and message.from_user.id in ADMINS:
+		elif message.text.startswith('!clearcommands') and SENDER_IS_ADMIN:
 			collection_squad_commands.delete_many({})
 			bot.reply_to(message, f"Список очищен!")
 
-		elif message.text.startswith('!listcommands') and message.from_user.id in ADMINS:
+		elif message.text.startswith('!listcommands') and SENDER_IS_ADMIN:
 			handler_list_commands(bot,message,my_logger)
 
-		elif message.text.startswith('!tboverview') and message.from_user.id in ADMINS:
+		elif message.text.startswith('!tboverview') and SENDER_IS_ADMIN:
 			handler_overview_commands(bot,message,my_logger)
 
-		elif message.text.startswith('!sendallcommands') and message.from_user.id in ADMINS:
+		elif message.text.startswith('!sendallcommands') and SENDER_IS_ADMIN:
 			handler_sendall_commands(bot,message,my_logger)
 
-		elif message.text.startswith('!checkregs') and message.from_user.id in ADMINS:
+		elif message.text.startswith('!checkregs') and SENDER_IS_ADMIN:
 			handler_checkregs(bot,message,my_logger)
 
 		elif message.text.startswith('!команды'):

@@ -1,6 +1,7 @@
 import pymongo
 from pymongo import MongoClient
 from const import *
+from const_secured import *
 
 mongo_client = MongoClient()
 mongo_db = mongo_client.darth
@@ -18,10 +19,17 @@ def handler_list(bot,message,my_logger):
 
 	try:
 
+		ADMINS = []
+		row_admins = collection_users.find({'is_admin': 1})
+		for ra in row_admins:
+			ADMINS.append(ra['tele_id'])
+
 		row = collection_users.find().sort([('swgoh_name', pymongo.ASCENDING)])
 		count_row = collection_users.count_documents({})
 		msg = 'Список всех зарегистрированных пользователей:\n\n'
 		for r in row:
+			if message.chat.id == OWNER and 'tele_id' in r.keys() and message.text == "!listfull" and r['tele_id'] in ADMINS:
+				msg += f"\u2726 "
 			msg += f"{r['swgoh_name']} - @{r['user']} [{r['ally_code']}]"
 			if message.chat.id == OWNER and 'tele_id' in r.keys() and message.text == "!listfull":
 				msg += f" [tg {r['tele_id']}]"
