@@ -75,18 +75,72 @@ def handler_ready(bot,message,my_logger):
 
 				# в итоге в not_have7 будут все, у кого не на 7 звезд
 
-				msg += f'Из них *{len(already_have7)}* уже имеют данного персонажа на `7` звезд:\n_{", ".join(already_have7)}_\n\n'
-				if len(already_have6) > 0:
-					msg += f'Еще *{len(already_have6)}* — на `6` звезд:\n_{", ".join(already_have6)}_\n\n'
-				if len(already_have5) > 0:
-					msg += f'И еще *{len(already_have5)}* — на `5` звезд:\n_{", ".join(already_have5)}_\n\n'
+				if len(already_have7) > 0 or len(already_have6) > 0 or len(already_have5) > 0:
+					msg += f'Из них *{len(already_have7)}* уже имеют данного персонажа на `7` звезд:\n_{", ".join(already_have7)}_\n\n'
+					if len(already_have6) > 0:
+						msg += f'Еще *{len(already_have6)}* — на `6` звезд:\n_{", ".join(already_have6)}_\n\n'
+					if len(already_have5) > 0:
+						msg += f'И еще *{len(already_have5)}* — на `5` звезд:\n_{", ".join(already_have5)}_\n\n'
+				else:
+					msg += f'*Ни у кого из гильдии нет этого персонажа!*\n\n'
 
 
 				if not pers_id in REQS: # если не нужно проверять готовность к ивенту (вампа, хода, трея), то сразу напишем у кого нет вообще
 					msg += f'Список тех, у кого нет вообще:\n_{", ".join(not_have_at_all)}_'
 
+
+				if pers_id == "JEDIKNIGHTLUKE":
+
+					msg_improve = ""
+
+					if len(not_have7) > 0:
+
+						not_have7_copy = not_have7[:]  # в not_have7_copy список игроков, которые еще не получили персонажа
+						msg += f'Кто во время следующего события сможет взять этого персонажа или улучшить по звездам'
+						msg += ':\n\n'
+
+						for nh in not_have7:
+
+							found_user_stat = collection_stats.find_one({"player_name": nh})
+							stars = {}
+							relic = {}
+
+							for req in REQS[pers_id]:
+								if req in found_user_stat:
+									if found_user_stat[req+"_relic"]:
+										relic[req] = int(found_user_stat[req+"_relic"])-1
+									else:
+										relic[req] = 0
+								else:
+									relic[req] = 0
+
+							readiness_percent = 0
+
+							for req in REQS[pers_id]: # идем по полному списку требований на люка
+								if req in relic:
+									if relic[req] >= 3:
+										readiness_percent += 11
+									else:
+										pass
+
+							if readiness_percent == 99:
+								msg_improve += f"`{nh}`: \u2605 \u2605 \u2605 \u2605 \u2605 \u2605 \u2605 \n" # записываем, что этот игрок получит на 7 звезд
+								not_have7_copy.remove(nh) # убираем его из списка тех, кто не получит
+
+					if msg_improve == "":
+						if count_row == len(already_have7):
+							msg_improve = "`ВСЕ ИГРОКИ ГИЛЬДИИ ЗАКОНЧИЛИ СБОР ПЕРСОНАЖА`"
+						else:
+							msg_improve = "_Никто больше не готов_\n"
+
+					msg += msg_improve
+
+					if len(not_have7_copy) > 0:
+						msg += f'\nСписок тех, кто *не готов улучшить или получить*:\n_{", ".join(not_have7_copy)}_'
+
+
 				# если это персонаж, которого нужно брать через ивенты - проверим готовность к ивенту
-				if pers_id in REQS:
+				elif pers_id in REQS:
 
 					msg_improve = ""
 
@@ -94,13 +148,15 @@ def handler_ready(bot,message,my_logger):
 
 						not_have7_copy = not_have7[:] # в этом листе будем держать список тех, кто остается (не сможет улучшить)
 
-						msg += f'Кто во время следующего события сможет взять этого персонажа или улучшить по звездам\n'
-						msg += f'(определяется только по нужном количеству звезд): \n\n'
+						msg += f'Кто во время следующего события сможет взять этого персонажа или улучшить по звездам'
+						msg += f'\n(определяется только по нужном количеству звезд)'
+						msg += ':\n\n'
 
 						for nh in not_have7: # пробежимся по каждому игроку, у которого не на 7 звезд (nh = swgoh name) и проверим, сможет ли улучшить результат
 
 							found_user_stat = collection_stats.find_one({"player_name": nh})
 							stars = {}
+							relic = {}
 
 							for req in REQS[pers_id]: # возьмем список требований для получения и сохраним в stars значения по количеству звезд у нужных
 								if req in found_user_stat:
@@ -209,7 +265,6 @@ def handler_ready(bot,message,my_logger):
 								elif can_improve_to == 5:
 									msg_improve += f"`{nh}`: \u2605 \u2605 \u2605 \u2605 \u2605 \u2606 \u2606 \n"
 									not_have7_copy.remove(nh)
-
 
 							elif len(full_stars)>=5: # стандартный вариант - нужно 5 любых подходящих на максимум звезд
 								msg_improve += f"`{nh}`: {STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}{STAR_EMOJI}\n"

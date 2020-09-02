@@ -23,7 +23,8 @@ LEGENDARIES = {
 				"PADMEAMIDALA": "Padme Amidala",
 				"HERMITYODA": "Hermit Yoda",
 				"WAMPA": "Wampa",
-				"DARTHTRAYA": "Darth Traya"
+				"DARTHTRAYA": "Darth Traya",
+				"JEDIKNIGHTLUKE": "Jedi Knight Luke Skywalker"
 			  }
 
 REQS = {}
@@ -69,6 +70,9 @@ REQS['PADMEAMIDALA'] = ["ASAJVENTRESS", "GEONOSIANSOLDIER", "GEONOSIANSPY", "NUT
 REQS['MILLENNIUMFALCON'] = ["HOUNDSTOOTH", "IG2000", "SLAVE1", "XANADUBLOOD"]
 
 REQS['CAPITALCHIMAERA'] = ["CAPITALMONCALAMARICRUISER", "GHOST", "PHANTOM2", "XWINGRED3", "XWINGRED2", "UWINGROGUEONE", "UWINGSCARIF"]
+
+REQS['JEDIKNIGHTLUKE'] = ["C3POLEGENDARY", "VADER", "WAMPA", "CHEWBACCALEGENDARY", "HOTHLEIA", "HOTHHAN", 
+						"ADMINISTRATORLANDO", "HERMITYODA", "COMMANDERLUKESKYWALKER"]
 
 UNLOCKS_AT_FIVE = ["MILLENNIUMFALCON", "R2D2_LEGENDARY", "BB8", "GRANDADMIRALTHRAWN", "C3POLEGENDARY",
 					"CHEWBACCALEGENDARY", "CAPITALCHIMAERA", "PADMEAMIDALA"]
@@ -146,7 +150,13 @@ REQS_ALIASES = {
 	'traya': "DARTHTRAYA",
 
 	'thrawn': "GRANDADMIRALTHRAWN",
-	'траун': "GRANDADMIRALTHRAWN"
+	'траун': "GRANDADMIRALTHRAWN",
+
+	'джлюк': "JEDIKNIGHTLUKE",
+	'жлюк': "JEDIKNIGHTLUKE",
+	'jluke': "JEDIKNIGHTLUKE",
+	'jediluke': "JEDIKNIGHTLUKE",
+	'длюк': "JEDIKNIGHTLUKE"
 }
 
 
@@ -199,4 +209,5 @@ msg_ready_help += f'`!готовность сокол`\n'
 msg_ready_help += f'`!готовность химера`\n'
 msg_ready_help += f'`!готовность трея`\n'
 msg_ready_help += f'`!готовность вампа`\n'
-msg_ready_help += f'`!готовность хода`'
+msg_ready_help += f'`!готовность хода`\n'
+msg_ready_help += f'`!готовность джлюк`'
