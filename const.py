@@ -87,7 +87,7 @@ REQS_LONG["WATTAMBOR"] = {   "GEONOSIANSOLDIER": "gear 12",
 							 "GEONOSIANSPY": "gear 12",   
 							 "POGGLETHELESSER": "gear 12", 
 							 "SUNFAC": "gear 12",  
-							 "GEONOSIANBROODALPHA": "gear 17" }
+							 "GEONOSIANBROODALPHA": "gear 12" }
 
 REQS_LONG["GENERALSKYWALKER"] = { 	
 									#"CAPITALJEDICRUISER": "power 40000", 
