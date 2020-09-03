@@ -22,10 +22,16 @@ LEGENDARIES = {
 				"HERMITYODA": "Hermit Yoda",
 				"WAMPA": "Wampa",
 				"DARTHTRAYA": "Darth Traya",
-				"JEDIKNIGHTLUKE": "Jedi Knight Luke Skywalker"
+				"GENERALSKYWALKER": "General Skywalker",
+				"JEDIKNIGHTLUKE": "Jedi Knight Luke Skywalker",
+				"GLREY": "Galactic Legend Rey",
+				"SUPREMELEADERKYLOREN": "Supreme Leader Kylo Ren",
+				"KIADIMUNDI": "Ki Adi Mundi",
+				"WATTAMBOR": "Wat Tambor"
 			  }
 
 REQS = {}
+REQS_LONG = {}
 
 REQS['GRANDADMIRALTHRAWN'] = ["EZRABRIDGERS3", "HERASYNDULLAS3", "KANANJARRUSS3", "ZEBS3", "CHOPPERS3", "SABINEWRENS3"]
 REQS['REYJEDITRAINING'] = ["REY", "FINN", "BB8", "SMUGGLERHAN", "SMUGGLERCHEWBACCA"]
@@ -63,14 +69,81 @@ REQS['DARTHREVAN'] = ["BASTILASHANDARK", "CANDEROUSORDO", "CARTHONASI", "HK47", 
 REQS['JEDIKNIGHTREVAN'] = ["BASTILASHAN", "JOLEEBINDO", "T3_M4", "MISSIONVAO", "ZAALBAR"]
 
 REQS['PADMEAMIDALA'] = ["ASAJVENTRESS", "GEONOSIANSOLDIER", "GEONOSIANSPY", "NUTEGUNRAY", "POGGLETHELESSER", "MAGNAGUARD", 
-						"GRIEVOUS", "SUNFAC", "B1BATTLEDROIDV2", "COUNTDOOKU", "DROIDEKA", "B2SUPERBATTLEDROID"]
+						"GRIEVOUS", "SUNFAC", "B1BATTLEDROIDV2", "COUNTDOOKU", "DROIDEKA", "B2SUPERBATTLEDROID", "GEONOSIANBROODALPHA"]
 
 REQS['MILLENNIUMFALCON'] = ["HOUNDSTOOTH", "IG2000", "SLAVE1", "XANADUBLOOD"]
 
 REQS['CAPITALCHIMAERA'] = ["CAPITALMONCALAMARICRUISER", "GHOST", "PHANTOM2", "XWINGRED3", "XWINGRED2", "UWINGROGUEONE", "UWINGSCARIF"]
 
-REQS['JEDIKNIGHTLUKE'] = ["C3POLEGENDARY", "VADER", "WAMPA", "CHEWBACCALEGENDARY", "HOTHLEIA", "HOTHHAN", 
-						"ADMINISTRATORLANDO", "HERMITYODA", "COMMANDERLUKESKYWALKER"]
+LIST_WITH_LONG_REQS = ["GENERALSKYWALKER", "JEDIKNIGHTLUKE", "GLREY", "SUPREMELEADERKYLOREN", "WATTAMBOR", "KIADIMUNDI"]
+
+REQS_LONG["KIADIMUNDI"] = {   "SHAAKTI": "gear 18", 
+							 "CT7567": "gear 18",   # rex
+							 "CT5555": "gear 20", 
+							 "CT210408": "gear 20",  #echo
+							 "ARCTROOPER501ST": "gear 20" }
+
+REQS_LONG["WATTAMBOR"] = {   "GEONOSIANSOLDIER": "gear 12", 
+							 "GEONOSIANSPY": "gear 12",   
+							 "POGGLETHELESSER": "gear 12", 
+							 "SUNFAC": "gear 12",  
+							 "GEONOSIANBROODALPHA": "gear 17" }
+
+REQS_LONG["GENERALSKYWALKER"] = { 	
+									#"CAPITALJEDICRUISER": "power 40000", 
+							 		#"JEDISTARFIGHTERANAKIN": "power 40000", 
+							 		#"JEDISTARFIGHTERAHSOKATANO": "power 40000", 
+							 		#"BLADEOFDORIN": "power 40000", 
+							 		#"ARC170CLONESERGEANT": "power 40000", 
+									"AHSOKATANO": "power 17700", 
+							 		"C3POLEGENDARY": "power 17700", 
+							 		"GENERALKENOBI": "power 17700", 
+							 		"PADMEAMIDALA": "power 17700", 
+							 		"SHAAKTI": "power 17700", 
+							 		"ASAJVENTRESS": "power 17700", 
+							 		"B1BATTLEDROIDV2": "power 17700", 
+							 		"B2SUPERBATTLEDROID": "power 17700",
+							 		"DROIDEKA": "power 17700", 
+							 		"MAGNAGUARD": "power 17700" }
+
+REQS_LONG["JEDIKNIGHTLUKE"] = { "C3POLEGENDARY": "gear 16", 
+							 "VADER": "gear 16", 
+							 "WAMPA": "gear 16", 
+							 "CHEWBACCALEGENDARY": "gear 16", 
+							 "HOTHLEIA": "gear 16", 
+							 "HOTHHAN": "gear 16", 
+							 "ADMINISTRATORLANDO": "gear 16", 
+							 "HERMITYODA": "gear 16", 
+							 "COMMANDERLUKESKYWALKER": "gear 16" }
+
+REQS_LONG["GLREY"] = { "AMILYNHOLDO": "gear 18",
+					"BB8": "gear 20",
+					"FINN": "gear 18",
+					"POE": "gear 18",
+					"EPIXFINN": "gear 18",
+					"EPIXPOE": "gear 18",
+					"RESISTANCEPILOT": "gear 16",
+					"RESISTANCETROOPER": "gear 18",
+					"REYJEDITRAINING": "gear 20",
+					"REY": "gear 20",
+					"ROSETICO": "gear 18",
+					"SMUGGLERCHEWBACCA": "gear 16",
+					"CAPITALRADDUS": "stars 5" }
+
+REQS_LONG["SUPREMELEADERKYLOREN"] = { 	"KYLORENUNMASKED": "gear 20",
+								   	"FIRSTORDERTROOPER": "gear 18",
+								   	"FIRSTORDEROFFICERMALE": "gear 18",
+									"KYLOREN": "gear 20",
+									"PHASMA": "gear 18",
+									"FIRSTORDEREXECUTIONER": "gear 18",
+									"SMUGGLERHAN": "gear 16",
+									"FOSITHTROOPER": "gear 18",
+									"TIEFIGHTERFOSF": "gear 16",
+									"GENERALHUX": "gear 18",
+									"FIRSTORDERTIEPILOT": "gear 16",
+									"EMPERORPALPATINE": "gear 20",
+									"CAPITALFINALIZER": "stars 5" }
+
 
 UNLOCKS_AT_FIVE = ["MILLENNIUMFALCON", "R2D2_LEGENDARY", "BB8", "GRANDADMIRALTHRAWN", "C3POLEGENDARY",
 					"CHEWBACCALEGENDARY", "CAPITALCHIMAERA", "PADMEAMIDALA"]
@@ -150,11 +223,31 @@ REQS_ALIASES = {
 	'thrawn': "GRANDADMIRALTHRAWN",
 	'траун': "GRANDADMIRALTHRAWN",
 
+	'гэс': "GENERALSKYWALKER",
+	'gas': "GENERALSKYWALKER",
+
 	'джлюк': "JEDIKNIGHTLUKE",
 	'жлюк': "JEDIKNIGHTLUKE",
 	'jluke': "JEDIKNIGHTLUKE",
 	'jediluke': "JEDIKNIGHTLUKE",
-	'длюк': "JEDIKNIGHTLUKE"
+	'длюк': "JEDIKNIGHTLUKE",
+
+	'лрей': "GLREY",
+	'lrey': "GLREY",
+	'глрей': "GLREY",
+	'glrey': "GLREY",
+
+	'wat': "WATTAMBOR",
+	'ват': "WATTAMBOR",
+
+	'кам': "KIADIMUNDI",
+	'kam': "KIADIMUNDI",
+
+	'лкайло': "SUPREMELEADERKYLOREN",
+	'лекало': "SUPREMELEADERKYLOREN",
+	'глкайл': "SUPREMELEADERKYLOREN",
+	'lkylo': "SUPREMELEADERKYLOREN",
+	'glkylo': "SUPREMELEADERKYLOREN"
 }
 
 
@@ -208,4 +301,6 @@ msg_ready_help += f'`!готовность химера`\n'
 msg_ready_help += f'`!готовность трея`\n'
 msg_ready_help += f'`!готовность вампа`\n'
 msg_ready_help += f'`!готовность хода`\n'
-msg_ready_help += f'`!готовность джлюк`'
+msg_ready_help += f'`!готовность джлюк`\n'
+msg_ready_help += f'`!готовность лрей`\n'
+msg_ready_help += f'`!готовность лкайло`'
