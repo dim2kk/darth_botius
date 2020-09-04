@@ -55,7 +55,7 @@ def handler_ready(bot,message,my_logger):
 					not_ready = []
 
 					one_char_percentage = 20
-					if pers_id == "GLREY" or pers_id == "SUPREMELEADERKYLOREN":
+					if pers_id == "GLREY" or pers_id == "SUPREMELEADERKYLOREN" or pers_id == "SITHETERNALEMPEROR" or pers_id == "JEDIMASTERLUKE":
 						one_char_percentage = 8
 					elif pers_id == "JEDIKNIGHTLUKE":
 						one_char_percentage = 11

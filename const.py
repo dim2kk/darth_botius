@@ -27,7 +27,9 @@ LEGENDARIES = {
 				"GLREY": "Galactic Legend Rey",
 				"SUPREMELEADERKYLOREN": "Supreme Leader Kylo Ren",
 				"KIADIMUNDI": "Ki Adi Mundi",
-				"WATTAMBOR": "Wat Tambor"
+				"WATTAMBOR": "Wat Tambor",
+				"SITHETERNALEMPEROR": "Sith Eternal Emperor",
+				"JEDIMASTERLUKE": "Jedi Master Luke Skywalker"
 			  }
 
 REQS = {}
@@ -75,7 +77,7 @@ REQS['MILLENNIUMFALCON'] = ["HOUNDSTOOTH", "IG2000", "SLAVE1", "XANADUBLOOD"]
 
 REQS['CAPITALCHIMAERA'] = ["CAPITALMONCALAMARICRUISER", "GHOST", "PHANTOM2", "XWINGRED3", "XWINGRED2", "UWINGROGUEONE", "UWINGSCARIF"]
 
-LIST_WITH_LONG_REQS = ["GENERALSKYWALKER", "JEDIKNIGHTLUKE", "GLREY", "SUPREMELEADERKYLOREN", "WATTAMBOR", "KIADIMUNDI"]
+LIST_WITH_LONG_REQS = ["GENERALSKYWALKER", "JEDIKNIGHTLUKE", "GLREY", "SUPREMELEADERKYLOREN", "WATTAMBOR", "KIADIMUNDI", "JEDIMASTERLUKE", "SITHETERNALEMPEROR"]
 
 REQS_LONG["KIADIMUNDI"] = {   "SHAAKTI": "gear 18", 
 							 "CT7567": "gear 18",   # rex
@@ -143,6 +145,36 @@ REQS_LONG["SUPREMELEADERKYLOREN"] = { 	"KYLORENUNMASKED": "gear 20",
 									"FIRSTORDERTIEPILOT": "gear 16",
 									"EMPERORPALPATINE": "gear 20",
 									"CAPITALFINALIZER": "stars 5" }
+
+REQS_LONG["JEDIMASTERLUKE"] = { 	"OLDBENKENOBI": "gear 18",
+									"REYJEDITRAINING": "gear 20",
+									"C3POLEGENDARY": "gear 18",
+									"MONMOTHMA": "gear 18",
+									"C3POCHEWBACCA": "gear 18",
+									"UNKNOWN": "gear 18",
+									"UNKNOWN": "gear 16",
+									"UNKNOWN": "gear 18",
+									"UNKNOWN": "gear 20",
+									"UNKNOWN": "gear 20",
+									"UNKNOWN": "gear 18",
+									"UNKNOWN": "gear 16",
+									"UNKNOWN": "gear 16",
+									"UNKNOWN": "stars 5" }
+
+REQS_LONG["SITHETERNALEMPEROR"] = { 	"EMPERORPALPATINE": "gear 20",
+										"VADER": "gear 20",
+										"ROYALGUARD": "gear 16",
+										"DIRECTORKRENNIC": "gear 17",
+										"ADMIRALPIETT": "gear 18",
+										"UNKNOWN": "gear 18",
+										"UNKNOWN": "gear 16",
+										"UNKNOWN": "gear 18",
+										"UNKNOWN": "gear 20",
+										"UNKNOWN": "gear 20",
+										"UNKNOWN": "gear 18",
+										"UNKNOWN": "gear 16",
+										"UNKNOWN": "gear 16",
+										"UNKNOWN": "stars 5" }
 
 
 UNLOCKS_AT_FIVE = ["MILLENNIUMFALCON", "R2D2_LEGENDARY", "BB8", "GRANDADMIRALTHRAWN", "C3POLEGENDARY",
@@ -243,6 +275,12 @@ REQS_ALIASES = {
 	'кам': "KIADIMUNDI",
 	'kam': "KIADIMUNDI",
 
+	'лпалпатин': "SITHETERNALEMPEROR",
+	'lpalpatin': "SITHETERNALEMPEROR",
+
+	'ллюк': "JEDIMASTERLUKE",
+	'lluke': "JEDIMASTERLUKE",
+
 	'лкайло': "SUPREMELEADERKYLOREN",
 	'лекало': "SUPREMELEADERKYLOREN",
 	'глкайл': "SUPREMELEADERKYLOREN",
@@ -303,4 +341,10 @@ msg_ready_help += f'`!готовность вампа`\n'
 msg_ready_help += f'`!готовность хода`\n'
 msg_ready_help += f'`!готовность джлюк`\n'
 msg_ready_help += f'`!готовность лрей`\n'
-msg_ready_help += f'`!готовность лкайло`'
+msg_ready_help += f'`!готовность лкайло`\n'
+msg_ready_help += f'`!готовность лпалпатин`\n'
+msg_ready_help += f'`!готовность ллюк`\n'
+msg_ready_help += f'`!готовность гэс`\n'
+msg_ready_help += f'`!готовность ват`\n'
+msg_ready_help += f'`!готовность кам`\n'
+
