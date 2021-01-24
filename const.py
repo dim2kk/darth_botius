@@ -28,8 +28,8 @@ LEGENDARIES = {
 				"SUPREMELEADERKYLOREN": "Supreme Leader Kylo Ren",
 				"KIADIMUNDI": "Ki Adi Mundi",
 				"WATTAMBOR": "Wat Tambor",
-				"SITHETERNALEMPEROR": "Sith Eternal Emperor",
-				"JEDIMASTERLUKE": "Jedi Master Luke Skywalker"
+				"SITHPALPATINE": "Sith Eternal Emperor",
+				"GRANDMASTERLUKE": "Jedi Master Luke Skywalker"
 			  }
 
 REQS = {}
@@ -77,7 +77,7 @@ REQS['MILLENNIUMFALCON'] = ["HOUNDSTOOTH", "IG2000", "SLAVE1", "XANADUBLOOD"]
 
 REQS['CAPITALCHIMAERA'] = ["CAPITALMONCALAMARICRUISER", "GHOST", "PHANTOM2", "XWINGRED3", "XWINGRED2", "UWINGROGUEONE", "UWINGSCARIF"]
 
-LIST_WITH_LONG_REQS = ["GENERALSKYWALKER", "JEDIKNIGHTLUKE", "GLREY", "SUPREMELEADERKYLOREN", "WATTAMBOR", "KIADIMUNDI", "JEDIMASTERLUKE", "SITHETERNALEMPEROR"]
+LIST_WITH_LONG_REQS = ["GENERALSKYWALKER", "JEDIKNIGHTLUKE", "GLREY", "SUPREMELEADERKYLOREN", "WATTAMBOR", "KIADIMUNDI", "GRANDMASTERLUKE", "SITHPALPATINE"]
 
 REQS_LONG["KIADIMUNDI"] = {   "SHAAKTI": "gear 18", 
 							 "CT7567": "gear 18",   # rex
@@ -146,35 +146,37 @@ REQS_LONG["SUPREMELEADERKYLOREN"] = { 	"KYLORENUNMASKED": "gear 20",
 									"EMPERORPALPATINE": "gear 20",
 									"CAPITALFINALIZER": "stars 5" }
 
-REQS_LONG["JEDIMASTERLUKE"] = { 	"OLDBENKENOBI": "gear 18",
+REQS_LONG["GRANDMASTERLUKE"] = { 	"OLDBENKENOBI": "gear 18", 
 									"REYJEDITRAINING": "gear 20",
 									"C3POLEGENDARY": "gear 18",
 									"MONMOTHMA": "gear 18",
 									"C3POCHEWBACCA": "gear 18",
-									"UNKNOWN": "gear 18",
-									"UNKNOWN": "gear 16",
-									"UNKNOWN": "gear 18",
-									"UNKNOWN": "gear 20",
-									"UNKNOWN": "gear 20",
-									"UNKNOWN": "gear 18",
-									"UNKNOWN": "gear 16",
-									"UNKNOWN": "gear 16",
-									"UNKNOWN": "stars 5" }
+									"JEDIKNIGHTLUKE": "gear 20",
+									"R2D2_LEGENDARY": "gear 20",
+									"HANSOLO": "gear 19",
+									"CHEWBACCALEGENDARY": "gear 19",
+									"YWINGREBEL": "stars 6",
+									"PRINCESSLEIA": "gear 16",   					
+									"HERMITYODA": "gear 18",						
+									"WEDGEANTILLES": "gear 16",						
+									"BIGGSDARKLIGHTER": "gear 16",						
+									"ADMINISTRATORLANDO": "gear 18" }						
 
-REQS_LONG["SITHETERNALEMPEROR"] = { 	"EMPERORPALPATINE": "gear 20",
+REQS_LONG["SITHPALPATINE"] = { 			"EMPERORPALPATINE": "gear 20",
 										"VADER": "gear 20",
 										"ROYALGUARD": "gear 16",
 										"DIRECTORKRENNIC": "gear 17",
 										"ADMIRALPIETT": "gear 18",
-										"UNKNOWN": "gear 18",
-										"UNKNOWN": "gear 16",
-										"UNKNOWN": "gear 18",
-										"UNKNOWN": "gear 20",
-										"UNKNOWN": "gear 20",
-										"UNKNOWN": "gear 18",
-										"UNKNOWN": "gear 16",
-										"UNKNOWN": "gear 16",
-										"UNKNOWN": "stars 5" }
+										"DARTHSIDIOUS": "gear 20",
+										"MAUL": "gear 17",
+										"COUNTDOOKU": "gear 19",
+										"SITHMARAUDER": "gear 20",
+										"TIEBOMBERIMPERIAL": "stars 6",
+										"ANAKINKNIGHT": "gear 20",					
+										"GRANDADMIRALTHRAWN": "gear 19",					
+										"GRANDMOFFTARKIN": "gear 16",					
+										"VEERS": "gear 16",					
+										"COLONELSTARCK": "gear 16" }
 
 
 UNLOCKS_AT_FIVE = ["MILLENNIUMFALCON", "R2D2_LEGENDARY", "BB8", "GRANDADMIRALTHRAWN", "C3POLEGENDARY",
@@ -275,11 +277,13 @@ REQS_ALIASES = {
 	'кам': "KIADIMUNDI",
 	'kam': "KIADIMUNDI",
 
-	'лпалпатин': "SITHETERNALEMPEROR",
-	'lpalpatin': "SITHETERNALEMPEROR",
+	'лпалпатин': "SITHPALPATINE",
+	'лпалп': "SITHPALPATINE",
+	'lpalpatin': "SITHPALPATINE",
+	'lpalp': "SITHPALPATINE",
 
-	'ллюк': "JEDIMASTERLUKE",
-	'lluke': "JEDIMASTERLUKE",
+	'ллюк': "GRANDMASTERLUKE",
+	'lluke': "GRANDMASTERLUKE",
 
 	'лкайло': "SUPREMELEADERKYLOREN",
 	'лекало': "SUPREMELEADERKYLOREN",

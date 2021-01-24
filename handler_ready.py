@@ -48,15 +48,17 @@ def handler_ready(bot,message,my_logger):
 				else:
 					passed_time_text = "более 1 дня"
 
-				if pers_id in LIST_WITH_LONG_REQS:
+				if pers_id in LIST_WITH_LONG_REQS: # сначала пройдем по персонажам со сложными требованиями (легенды, гэс, кам, ват, джлюк)
 
 					readiness_percent = {} # словарь для игроков, формат 'player_name': percent
 					already_have = [] # для списка игроков, которые уже получили персонажа целиком
 					not_ready = []
 
 					one_char_percentage = 20
-					if pers_id == "GLREY" or pers_id == "SUPREMELEADERKYLOREN" or pers_id == "SITHETERNALEMPEROR" or pers_id == "JEDIMASTERLUKE":
+					if pers_id == "GLREY" or pers_id == "SUPREMELEADERKYLOREN":
 						one_char_percentage = 8
+					elif pers_id == "GRANDMASTERLUKE" or pers_id == "SITHPALPATINE":
+						one_char_percentage = 7
 					elif pers_id == "JEDIKNIGHTLUKE":
 						one_char_percentage = 11
 					elif pers_id == "GENERALSKYWALKER":
